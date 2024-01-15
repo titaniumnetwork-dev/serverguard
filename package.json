@@ -3,10 +3,13 @@
   "module": "index.js",
   "type": "module",
   "devDependencies": {
-    "bun-types": "^1.0.22"
+    "bun-types": "latest"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "start": "bun run src/index.js"
   },
   "dependencies": {
     "@discordjs/core": "^1.1.1",
