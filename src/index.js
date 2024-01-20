@@ -53,7 +53,7 @@ app.get("/callback", async (req, res) => {
     if (callbackState === req.session.state) {
         console.log(`Oauth2 access code is ${req.query.code}`);
 
-        const tokenResponse = await fetch('https://discord.com/api/oauth2/token', {
+        const oauthResponse = await fetch('https://discord.com/api/oauth2/token', {
             method: 'POST',
             body: new URLSearchParams({
                 client_id: process.env.CLIENT_ID,
@@ -68,14 +68,16 @@ app.get("/callback", async (req, res) => {
             },
         });
 
-        const oauthResponse = await tokenResponse.json();
-        console.log(oauthResponse);
+        const tokenData = await oauthResponse.json();
 
-        ip = '198.98.51.189';
-        const query = await fetch(`https://proxycheck.io/v2/${ip}&short=1&vpn=3`);
-        const data = await query.json();
-        console.log(data);
-        if (data.proxy === "yes" || data.vpn === "yes" || data.type === "TOR") {
+        const user = await getUserData(tokenData.access_token);
+
+        console.log(user);
+
+
+        const ipData = await getIpData('198.98.51.189');
+        console.log(ipData);
+        if (ipData.proxy === "yes" || ipData.vpn === "yes" || ipData.type === "TOR") {
             res.send("flagged");
         }
         else {
@@ -90,3 +92,19 @@ app.get("/callback", async (req, res) => {
 app.listen(port, () => {
     console.log(`Listening on port ${port}...`);
 });
+
+async function getIpData(ip) {
+    const query = await fetch(`https://proxycheck.io/v2/${ip}&short=1&vpn=3`);
+    const data = await query.json();
+    return data;
+}
+
+async function getUserData(token) {
+    const query = await fetch('https://discord.com/api/v10/users/@me', {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        }
+    });
+    const userData = await query.json();
+    return userData;
+}
