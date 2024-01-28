@@ -1,13 +1,4 @@
-import { Pool } from 'pg';
-export const pool = new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT,
-});
-
-export async function checkIp(pool, hashedIp) {
-    const client = await pool.connect();
+export async function checkIp(client, hashedIp) {
     try {
         const res = await client.query(`SELECT id FROM userdata WHERE ip = '${hashedIp}';`);
         return res.rowCount > 0;
@@ -18,8 +9,7 @@ export async function checkIp(pool, hashedIp) {
     }
 }
 
-export async function setData(pool, id, ip) {
-    const client = await pool.connect();
+export async function setData(client, id, ip) {
     try {
         const res = await client.query(`INSERT INTO userdata VALUES(${id}, ${ip});`);
         console.log('Success');

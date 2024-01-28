@@ -3,6 +3,7 @@ import { URL } from 'node:url';
 import { Client, GatewayIntentBits } from 'discord.js';
 import { loadCommands, loadEvents } from './util/loaders.js';
 import { registerEvents } from './util/registerEvents.js';
+import { Pool } from 'pg';
 import express from 'express';
 import session from 'express-session';
 import crypto from 'crypto';
@@ -74,6 +75,14 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBit
 const app = express();
 const port = 3113;
 
+// Connect to the database (connection pooling)
+const pool = new Pool({
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT,
+});
+
 // Load the events and commands
 const events = await loadEvents(new URL('events/', import.meta.url));
 const commands = await loadCommands(new URL('commands/', import.meta.url));
@@ -84,7 +93,6 @@ registerEvents(commands, events, client);
 // Login to the client
 void client.login(process.env.DISCORD_TOKEN);
 
-let ip;
 const secret = crypto.randomBytes(64).toString('hex');
 const authURL = `https://discord.com/api/oauth2/authorize?client_id=${process.env.CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(process.env.REDIRECT_URI)}&scope=identify&state=`
 
@@ -124,11 +132,11 @@ app.get("/callback", async (req, res) => {
             res.send("flagged");
             return;
         }
-        if (db.checkIp(db.pool, ip)) {
+        if (db.checkIp(await pool.connect(), ip)) {
             res.send("flagged");
             return;
         }
-        db.setData(db.pool, id, ip)
+        db.setData(await pool.connect(), id, ip)
         res.send("passed");
     }
     else {
