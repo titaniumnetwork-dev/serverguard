@@ -6,6 +6,7 @@ import { registerEvents } from './util/registerEvents.js';
 import express from 'express';
 import session from 'express-session';
 import crypto from 'crypto';
+import * as db from './db/util.js';
 
 async function getIpData(ip) {
     const query = await fetch(`https://proxycheck.io/v2/${ip}&short=1&vpn=3`);
@@ -102,6 +103,7 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/callback", async (req, res) => {
+    const ip = req.ip;
     if (req.query.code === undefined) {
         res.status(401).send('Unauthorized');
         return;
@@ -112,17 +114,22 @@ app.get("/callback", async (req, res) => {
     if (callbackState === req.session.state) {
         const token = await getToken(req.query.code);
         const user = await getUserData(token);
-        console.log(user);
+        console.log(user.id);
+        const id = user.id;
         await invalidateToken(token);
 
         const ipData = await getIpData('198.98.51.189');
         console.log(ipData);
         if (ipData.proxy === "yes" || ipData.vpn === "yes" || ipData.type === "TOR") {
             res.send("flagged");
+            return;
         }
-        else {
-            res.send("passed");
+        if (db.checkIp(db.pool, ip)) {
+            res.send("flagged");
+            return;
         }
+        db.setData(db.pool, id, ip)
+        res.send("passed");
     }
     else {
         res.status(401).send('OAuth callback failed.');
