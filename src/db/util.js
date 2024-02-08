@@ -43,4 +43,16 @@ export async function deleteData(id) {
     }
 };
 
+export async function pendingDeletion(id) {
+    const client = await pool.connect();
+    try {
+        await client.query(`INSERT INTO pending VALUES(${id});`);
+        console.log('Success');
+    } catch (err) {
+        console.error(err);
+    } finally {
+        client.release();
+    }
+}
+
 const bool = await checkIp(10.675581339297423);
