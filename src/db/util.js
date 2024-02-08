@@ -3,7 +3,7 @@ import { Pool } from "pg";
 const pool = new Pool({
     user: process.env.DB_USER,
     host: process.env.DB_HOST,
-    password: 'vQZc3VDd!7R%TEU4F87Lk%aUvD%%!EgZ',
+    password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT,
 });
 
@@ -23,6 +23,18 @@ export async function setData(id, ip) {
     const client = await pool.connect();
     try {
         await client.query(`INSERT INTO userdata VALUES(${id}, ${ip});`);
+        console.log('Success');
+    } catch (err) {
+        console.error(err);
+    } finally {
+        client.release();
+    }
+};
+
+export async function deleteData(id) {
+    const client = await pool.connect();
+    try {
+        await client.query(`DELETE FROM userdata WHERE id='${id}';`);
         console.log('Success');
     } catch (err) {
         console.error(err);
