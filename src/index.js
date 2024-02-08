@@ -76,12 +76,6 @@ const app = express();
 const port = 3113;
 
 // Connect to the database (connection pooling)
-const pool = new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT,
-});
 
 // Load the events and commands
 const events = await loadEvents(new URL('events/', import.meta.url));
@@ -132,11 +126,11 @@ app.get("/callback", async (req, res) => {
             res.send("flagged");
             return;
         }
-        if (db.checkIp(await pool.connect(), ip)) {
+        if (db.checkIp(ip)) {
             res.send("flagged");
             return;
         }
-        db.setData(await pool.connect(), id, ip)
+        db.setData(id, ip)
         res.send("passed");
     }
     else {
