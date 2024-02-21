@@ -3,7 +3,6 @@ import { URL } from 'node:url';
 import { Client, GatewayIntentBits } from 'discord.js';
 import { loadCommands, loadEvents } from './util/loaders.js';
 import { registerEvents } from './util/registerEvents.js';
-import { Pool } from 'pg';
 import express from 'express';
 import session from 'express-session';
 import crypto from 'crypto';
@@ -44,7 +43,6 @@ async function invalidateToken(access_token) {
             'token': access_token,
         }),
     });
-    console.log(response);
 }
 
 async function getToken(authCode) {
@@ -105,7 +103,8 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/callback", async (req, res) => {
-    const ip = req.ip;
+    const ip = process.env.TEST_IP.toString();
+    console.log(process.env.TEST_IP.toString());
     if (req.query.code === undefined) {
         res.status(401).send('Unauthorized');
         return;
@@ -120,17 +119,18 @@ app.get("/callback", async (req, res) => {
         const id = user.id;
         await invalidateToken(token);
 
-        const ipData = await getIpData('198.98.51.189');
+        const ipData = await getIpData(process.env.TEST_IP);
         console.log(ipData);
         if (ipData.proxy === "yes" || ipData.vpn === "yes" || ipData.type === "TOR") {
             res.send("flagged");
             return;
         }
-        if (db.checkIp(ip)) {
+        if (await db.checkIp(ip)) {
+            console.log('ip in db');
             res.send("flagged");
             return;
         }
-        db.setData(id, ip)
+        await db.setData(id, '5')
         res.send("passed");
     }
     else {

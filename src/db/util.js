@@ -11,7 +11,8 @@ export async function checkIp(hashedIp) {
     const client = await pool.connect();
     try {
         const res = await client.query(`SELECT id FROM userdata WHERE ip = '${hashedIp}';`);
-        return res.rowCount > 0;
+        console.log(res.rowCount);
+        return res.rowCount !== 0;
     } catch (err) {
         console.error(err);
     } finally {
@@ -22,7 +23,7 @@ export async function checkIp(hashedIp) {
 export async function setData(id, ip) {
     const client = await pool.connect();
     try {
-        await client.query(`INSERT INTO userdata VALUES(${id}, ${ip});`);
+        await client.query(`INSERT INTO userdata VALUES(${id}, \`${ip}\`);`);
         console.log('Success');
     } catch (err) {
         console.error(err);
@@ -54,5 +55,3 @@ export async function pendingDeletion(id) {
         client.release();
     }
 }
-
-const bool = await checkIp(10.675581339297423);
