@@ -1,5 +1,5 @@
 import { EmbedBuilder } from 'discord.js';
-import { pendingDeletion } from '../db/util.js';
+import { pendingDeletion } from '../util/db.js';
 
 /** @type {import('./index.js').Command} */
 export default {
