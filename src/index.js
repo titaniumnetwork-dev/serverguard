@@ -15,9 +15,6 @@ async function getIpData(ip) {
     return data;
 }
 
-
-
-
 // Initialize the Discord client
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
 
@@ -47,32 +44,28 @@ app.use(session({
 }));
 
 app.get("/login", (req, res) => {
+
     const state = crypto.randomBytes(16).toString('hex');
-    console.log(state);
     req.session.state = state;
     res.redirect(authURL + state);
 
 });
 
 app.get("/callback", async (req, res) => {
-    const ip = process.env.TEST_IP.toString();
-    console.log(process.env.TEST_IP.toString());
     if (req.query.code === undefined) {
         res.status(401).send('Unauthorized');
         return;
     }
     const callbackState = req.query.state;
-    console.log(callbackState);
 
     if (callbackState === req.session.state) {
         const token = await oauth.getToken(req.query.code);
         const user = await oauth.getUserData(token);
-        console.log(user.id);
         const id = user.id;
         await oauth.invalidateToken(token);
+        const ip = process.env.TEST_IP;
 
-        const ipData = await getIpData(process.env.TEST_IP);
-        console.log(ipData);
+        const ipData = await getIpData(ip);
         if (ipData.proxy === "yes" || ipData.vpn === "yes" || ipData.type === "TOR") {
             res.send("flagged");
             return;
