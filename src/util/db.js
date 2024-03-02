@@ -28,7 +28,6 @@ export async function setData(id, ip) {
         const hashedIp = crypto.createHash('sha256').update(process.env.SALT + ip).digest('base64');
         const hashedId = crypto.createHash('sha256').update(process.env.SALT + id).digest('base64');
         await client.query(`INSERT INTO userdata VALUES('${hashedId}', '${hashedIp}');`);
-        console.log('Success');
     } catch (err) {
         console.error(err);
     } finally {
@@ -40,7 +39,6 @@ export async function deleteData(id) {
     const client = await pool.connect();
     try {
         await client.query(`DELETE FROM userdata WHERE id='${id}';`);
-        console.log('Success');
     } catch (err) {
         console.error(err);
     } finally {

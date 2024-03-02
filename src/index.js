@@ -15,6 +15,17 @@ async function getIpData(ip) {
     return data;
 }
 
+async function grantRole(id) {
+    const guild = await client.guilds.fetch(process.env.GUILD_ID);
+    if (await guild.members.fetch(id).catch(err => false)) {
+        const member = await guild.members.fetch(id);
+        if (!member.roles.cache.some(role => role.id === process.env.ROLE_ID)) {
+            member.roles.add(process.env.ROLE_ID);
+            console.log('Added role to ' + id);
+        }
+    }
+}
+
 // Initialize the Discord client
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
 
@@ -75,6 +86,7 @@ app.get("/callback", async (req, res) => {
             return;
         }
         await db.setData(id, ip)
+        await grantRole(id);
         res.send("passed");
     }
     else {
