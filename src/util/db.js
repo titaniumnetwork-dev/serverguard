@@ -26,8 +26,7 @@ export async function setData(id, ip) {
     const client = await pool.connect();
     try {
         const hashedIp = crypto.createHash('sha256').update(process.env.SALT + ip).digest('base64');
-        const hashedId = crypto.createHash('sha256').update(process.env.SALT + id).digest('base64');
-        await client.query(`INSERT INTO userdata VALUES('${hashedId}', '${hashedIp}');`);
+        await client.query(`INSERT INTO userdata VALUES('${id}', '${hashedIp}');`);
     } catch (err) {
         console.error(err);
     } finally {
@@ -71,7 +70,7 @@ export async function deletePending() {
             return [[0]];
         }
         result.rows.forEach(row => {
-            quereyString += `'${crypto.createHash('sha256').update(process.env.SALT + row[0]).digest('base64')}',`;
+            quereyString += `'${row[0]}',`;
         });
         quereyString = quereyString.slice(0, -1);
         await client.query(`DELETE FROM userdata WHERE id IN (${quereyString});`);
