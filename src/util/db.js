@@ -51,11 +51,38 @@ export async function deleteData(id) {
 export async function pendingDeletion(id) {
     const client = await pool.connect();
     try {
-        await client.query(`INSERT INTO pending VALUES(${id});`);
+        await client.query(`INSERT INTO pending VALUES('${id}');`);
         console.log('Success');
     } catch (err) {
         console.error(err);
     } finally {
+        client.release();
+    }
+}
+
+export async function deletePending() {
+    const client = await pool.connect();
+    try {
+        const result = await client.query({
+            rowMode: 'array',
+            // text: 'DELETE FROM userdata WHERE id IN (select id from pending);'
+            text: 'SELECT id FROM pending;'
+        });
+        let quereyString = '';
+        if (result.rowCount === 0) {
+            return [[0]];
+        }
+        result.rows.forEach(row => {
+            quereyString += `'${crypto.createHash('sha256').update(process.env.SALT + row[0]).digest('base64')}',`;
+        });
+        quereyString = quereyString.slice(0, -1);
+        await client.query(`DELETE FROM userdata WHERE id IN (${quereyString});`);
+        await client.query(`TRUNCATE table pending;`);
+        return result.rows;
+    } catch (err) {
+        console.log(err);
+    }
+    finally {
         client.release();
     }
 }

@@ -44,7 +44,6 @@ app.use(session({
 }));
 
 app.get("/login", (req, res) => {
-
     const state = crypto.randomBytes(16).toString('hex');
     req.session.state = state;
     res.redirect(authURL + state);
