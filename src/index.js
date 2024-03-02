@@ -54,6 +54,8 @@ app.use(session({
     saveUninitialized: true
 }));
 
+app.use(express.static(import.meta.dir + '/public'))
+
 app.get("/login", (req, res) => {
     const state = crypto.randomBytes(16).toString('hex');
     req.session.state = state;
@@ -82,16 +84,24 @@ app.get("/callback", async (req, res) => {
         }
         if (await db.checkIp(ip)) {
             console.log('ip in db');
-            res.send("flagged");
+            res.redirect('/flagged');
             return;
         }
         await db.setData(id, ip)
         await grantRole(id);
-        res.send("passed");
+        res.redirect('/passed');
     }
     else {
         res.status(401).send('OAuth callback failed.');
     }
+});
+
+app.get("/passed", async (req, res) => {
+    res.sendFile('/public/passed.html', { root: import.meta.dir });
+});
+
+app.get("/flagged", async (req, res) => {
+    res.sendFile('/public/flagged.html', { root: import.meta.dir });
 });
 
 app.listen(port, () => {
