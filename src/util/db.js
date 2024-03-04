@@ -13,8 +13,10 @@ export async function checkIp(ip) {
     try {
         const hashed = crypto.createHash('sha256').update(process.env.SALT + ip).digest('base64');
         const res = await client.query(`SELECT id FROM userdata WHERE ip = '${hashed}';`);
-        console.log(res.rowCount);
-        return res.rowCount !== 0;
+        if (res.rowCount !== 0) {
+            return res.rows[0].id;
+        }
+        return false;
     } catch (err) {
         console.error(err);
     } finally {

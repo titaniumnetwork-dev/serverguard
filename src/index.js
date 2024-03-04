@@ -3,7 +3,7 @@ import { URL } from 'node:url';
 import { Client, GatewayIntentBits } from 'discord.js';
 import { loadCommands, loadEvents } from './util/loaders.js';
 import { registerEvents } from './util/registerEvents.js';
-import { EmbedBuilder, WebhookClient } from 'discord.js';
+import { WebhookClient } from 'discord.js';
 import express from 'express';
 import session from 'express-session';
 import crypto from 'crypto';
@@ -27,17 +27,33 @@ async function grantRole(id) {
     }
 }
 
-async function logWebhook(id, status) {
+async function logWebhook(id, status, mainId) {
     const webhookClient = new WebhookClient({ url: process.env.WEBHOOK_URL });
-    const embed = new EmbedBuilder()
-        .setTitle('Some Title')
-        .setColor(0x00FFFF);
+    if (status === 'passed') {
+        webhookClient.send({
+            username: client.user.globalName,
+            avatarURL: 'https://i.imgur.com/AfFp7pu.png',
+            content: `<@!${id}> has successfully verified.`,
+        });
+        return;
+    }
+    if (status === 'alt') {
+        webhookClient.send({
+            username: client.user.globalName,
+            avatarURL: 'https://i.imgur.com/AfFp7pu.png',
+            content: `<@!${id}> was flagged as an alt account. Their main is <@!${mainId}>.`,
+        });
+        return;
+    }
 
-    webhookClient.send({
-        username: 'some-username',
-        avatarURL: 'https://i.imgur.com/AfFp7pu.png',
-        embeds: [embed],
-    });
+    if (status === 'proxy') {
+        webhookClient.send({
+            username: client.user.globalName,
+            avatarURL: 'https://i.imgur.com/AfFp7pu.png',
+            content: `<@!${id}> attempted to verify over a proxy or a VPN.`,
+        });
+        return;
+    }
 }
 
 // Initialize the Discord client
@@ -58,8 +74,6 @@ registerEvents(commands, events, client);
 
 // Login to the client
 void client.login(process.env.DISCORD_TOKEN);
-
-logWebhook();
 const secret = crypto.randomBytes(64).toString('hex');
 const authURL = `https://discord.com/api/oauth2/authorize?client_id=${process.env.CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(process.env.REDIRECT_URI)}&scope=identify&state=`
 
@@ -94,16 +108,19 @@ app.get("/callback", async (req, res) => {
 
         const ipData = await getIpData(ip);
         if (ipData.proxy === "yes" || ipData.vpn === "yes" || ipData.type === "TOR") {
-            res.send("flagged");
+            await logWebhook(id, 'proxy');
+            res.redirect('/flagged');
             return;
         }
         if (await db.checkIp(ip)) {
-            console.log('ip in db');
+            const mainId = await db.checkIp(ip);
+            await logWebhook(id, 'alt', mainId);
             res.redirect('/flagged');
             return;
         }
         await db.setData(id, ip)
         await grantRole(id);
+        await logWebhook(id, 'passed');
         res.redirect('/passed');
     }
     else {
