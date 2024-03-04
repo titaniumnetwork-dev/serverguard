@@ -104,7 +104,7 @@ app.get("/callback", async (req, res) => {
         const user = await oauth.getUserData(token);
         const id = user.id;
         await oauth.invalidateToken(token);
-        const ip = process.env.TEST_IP;
+        const ip = req.headers['cf-connecting-ip'];
 
         const ipData = await getIpData(ip);
         if (ipData.proxy === "yes" || ipData.vpn === "yes" || ipData.type === "TOR") {
