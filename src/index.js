@@ -114,6 +114,10 @@ app.get("/callback", async (req, res) => {
         }
         if (await db.checkIp(ip)) {
             const mainId = await db.checkIp(ip);
+            if (id == mainId) {
+                res.redirect('/passed');
+                return;
+            }
             await logWebhook(id, 'alt', mainId);
             res.redirect('/flagged');
             return;
@@ -129,6 +133,7 @@ app.get("/callback", async (req, res) => {
 });
 
 app.get("/passed", async (req, res) => {
+    console.log(req);
     res.sendFile('/public/passed.html', { root: import.meta.dir });
 });
 
