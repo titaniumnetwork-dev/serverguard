@@ -1,4 +1,4 @@
-import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js'; 
+import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 /** @type {import('./index.js').Command} */
 export default {
 	data: {
@@ -7,18 +7,18 @@ export default {
 	},
 	async execute(interaction) {
 		const messageEmbed = new EmbedBuilder()
-            .setTitle('Verify with this server')
-            .setDescription('In order to gain access to this server, we require verification in order to prevent alting.')
+			.setTitle('Verify with this server')
+			.setDescription('In order to gain access to this server, we require verification in order to prevent alting.')
 			.setColor('#600080');
-			
+
 		const button = new ButtonBuilder()
 			.setLabel('Verify now!')
-			.setURL('https://reinin.dev')
+			.setURL('https://titaniumnetwork.org/login')
 			.setStyle(ButtonStyle.Link);
-			
+
 		const row = new ActionRowBuilder()
 			.addComponents(button);
-			
+
 		await interaction.reply({
 			embeds: [messageEmbed],
 			components: [row],
