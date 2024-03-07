@@ -51,7 +51,6 @@ export async function pendingDeletion(id) {
     const client = await pool.connect();
     try {
         await client.query(`INSERT INTO pending VALUES('${id}');`);
-        console.log('Success');
     } catch (err) {
         console.error(err);
     } finally {
@@ -79,6 +78,19 @@ export async function deletePending() {
         await client.query(`TRUNCATE table pending;`);
         return result.rows;
     } catch (err) {
+        console.log(err);
+    }
+    finally {
+        client.release();
+    }
+}
+
+export async function cancelPending(id) {
+    const client = await pool.connect();
+    try {
+        await client.query(`DELETE FROM pending WHERE id='${id}'`);
+    }
+    catch (err) {
         console.log(err);
     }
     finally {

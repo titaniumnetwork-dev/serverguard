@@ -1,6 +1,6 @@
 import process from 'node:process';
 import { URL } from 'node:url';
-import { Client, GatewayIntentBits } from 'discord.js';
+import { Client, GatewayIntentBits, Partials } from 'discord.js';
 import { loadCommands, loadEvents } from './util/loaders.js';
 import { registerEvents } from './util/registerEvents.js';
 import { WebhookClient } from 'discord.js';
@@ -57,7 +57,17 @@ async function logWebhook(id, status, mainId) {
 }
 
 // Initialize the Discord client
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMembers,
+    ],
+    partials: [
+        Partials.GuildMember,
+    ]
+});
 
 // Initizalize the Express server
 const app = express();
@@ -115,6 +125,7 @@ app.get("/callback", async (req, res) => {
         if (await db.checkIp(ip)) {
             const mainId = await db.checkIp(ip);
             if (id == mainId) {
+                await grantRole(id);
                 res.redirect('/passed');
                 return;
             }
