@@ -11,7 +11,7 @@ import * as db from './util/db.js';
 import * as oauth from './util/oauth.js';
 
 async function getIpData(ip) {
-    const query = await fetch(`https://proxycheck.io/v2/${ip}&short=1&vpn=3`);
+    const query = await fetch(`http://ip-api.com/json/${ip}?fields=16990208`);
     const data = await query.json();
     return data;
 }
@@ -107,7 +107,7 @@ app.get("/callback", async (req, res) => {
         const ip = req.headers['cf-connecting-ip'];
 
         const ipData = await getIpData(ip);
-        if (ipData.proxy === "yes" || ipData.vpn === "yes" || ipData.type === "TOR") {
+        if (ipData.mobile === true || ipData.proxy === true || ipData.hosting === true) {
             await logWebhook(id, 'proxy');
             res.redirect('/flagged');
             return;
