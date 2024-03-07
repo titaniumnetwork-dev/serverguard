@@ -133,7 +133,6 @@ app.get("/callback", async (req, res) => {
 });
 
 app.get("/passed", async (req, res) => {
-    console.log(req);
     res.sendFile('/public/passed.html', { root: import.meta.dir });
 });
 
