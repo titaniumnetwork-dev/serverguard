@@ -9,3 +9,5 @@ Created in response to mistrust of DC's development team as well as a desire to 
 - [proudparrot](https://github.com/proudparrot2): Frontend developer
 - Riftriot and Rafflesia: Helped a lot and gave good feedback
 - All the testers!
+
+[Source repo for frontend](https://github.com/proudparrot2/proxyguard)
