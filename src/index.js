@@ -18,10 +18,14 @@ async function getIpData(ip) {
 
 async function grantRole(id) {
     const guild = await client.guilds.fetch(process.env.GUILD_ID);
-    if (await guild.members.fetch(id).catch(err => false)) {
+    if (await guild.members.fetch(id).catch(() => false)) {
         const member = await guild.members.fetch(id);
         if (!member.roles.cache.some(role => role.id === process.env.ROLE_ID)) {
             member.roles.add(process.env.ROLE_ID);
+            console.log('Added role to ' + id);
+        }
+        if (!member.roles.cache.some(role => role.id === process.env.ROLE_ID_2)) {
+            member.roles.add(process.env.ROLE_ID_2);
             console.log('Added role to ' + id);
         }
     }
