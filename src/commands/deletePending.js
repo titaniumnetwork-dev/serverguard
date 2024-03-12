@@ -6,6 +6,7 @@ export default {
     data: {
         name: 'deletepending',
         description: 'Deletes all entries that are pending deletion.',
+        dm_permission: false,
     },
     async execute(interaction) {
         const result = await deletePending();
