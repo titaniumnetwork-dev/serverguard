@@ -10,8 +10,8 @@ export default {
     async execute(interaction) {
         const result = await deletePending();
         for (const id of result) {
-            if (await guild.members.fetch(id[0]).catch(err => false)) {
-                const member = await guild.members.fetch(id[0]);
+            if (await interaction.guild.members.fetch(id[0]).catch(err => false)) {
+                const member = await interaction.guild.members.fetch(id[0]);
                 if (member.roles.cache.some(role => role.id === process.env.ROLE_ID)) {
                     member.roles.remove(process.env.ROLE_ID);
                     console.log('Removed role from ' + id[0]);
