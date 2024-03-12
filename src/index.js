@@ -54,7 +54,7 @@ async function logWebhook(id, status, mainId) {
         webhookClient.send({
             username: client.user.globalName,
             avatarURL: 'https://i.imgur.com/AfFp7pu.png',
-            content: `<@!${id}> attempted to verify over a proxy or a VPN.`,
+            content: `<@!${id}> attempted to verify over a proxy, VPN, or mobile data.`,
         });
         return;
     }
