@@ -121,7 +121,12 @@ app.get("/callback", async (req, res) => {
         const ip = req.headers['cf-connecting-ip'];
 
         const ipData = await getIpData(ip);
-        if (ipData.mobile === true || ipData.proxy === true || ipData.hosting === true) {
+        if (ipData.mobile === true || ipData.proxy === true) {
+            await logWebhook(id, 'proxy');
+            res.redirect('/flagged');
+            return;
+        }
+        if (ipData.hosting === true && ipData.isp !== "SpaceX Starlink") {
             await logWebhook(id, 'proxy');
             res.redirect('/flagged');
             return;
