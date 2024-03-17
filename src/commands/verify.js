@@ -35,7 +35,7 @@ export default {
   async execute(interaction) {
     const member = await interaction.guild.members.fetch(interaction.user.id);
 
-    if (!member.roles.cache.has(process.env.STAFF_ROLE_ID)) {
+    if (!member.roles.cache.has(process.env.STAFF_ROLE)) {
       return interaction.reply({
         content: "You do not have permission to use this command.",
         ephemeral: true,
