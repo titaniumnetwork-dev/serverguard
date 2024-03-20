@@ -108,7 +108,7 @@ app.get("/login", (req, res) => {
 
 app.get("/callback", async (req, res) => {
     if (req.query.code === undefined) {
-        res.status(401).send('Unauthorized');
+        res.status(401).sendFile('/public/error.html')
         return;
     }
     const callbackState = req.query.state;
@@ -134,7 +134,8 @@ app.get("/callback", async (req, res) => {
                 return;
             }
             await logWebhook(id, 'alt', mainId);
-            res.redirect('/flagged');
+            await client.roles.add(process.env.ALT_ROLE_ID);
+            res.redirect('/altflagged');
             return;
         }
         await db.setData(id, ip)
@@ -153,6 +154,10 @@ app.get("/passed", async (req, res) => {
 
 app.get("/flagged", async (req, res) => {
     res.sendFile('/public/flagged.html', { root: import.meta.dir });
+});
+
+app.get("/altflagged", async (req, res) => {
+    res.sendFile('/public/altflagged.html', { root: import.meta.dir });
 });
 
 app.listen(port, () => {
