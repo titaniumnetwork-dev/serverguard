@@ -58,6 +58,15 @@ async function logWebhook(id, status, mainId) {
         });
         return;
     }
+
+    if (status === 'mobile') {
+        webhookClient.send({
+            username: client.user.globalName,
+            avatarURL: 'https://i.imgur.com/AfFp7pu.png',
+            content: `<@!${id}> Is trying to verify over a potential mobile data connection.`,
+        });
+        return;
+    }
 }
 
 // Initialize the Discord client
@@ -126,11 +135,17 @@ app.get("/callback", async (req, res) => {
             res.redirect('/flagged');
             return;
         }
-        if (ipData.isp !== "SpaceX Starlink") {
+        if (ipData.isp === "SpaceX Starlink") {
             await db.setData(id, ip)
             await grantRole(id);
             await logWebhook(id, 'passed');
             res.redirect('/passed');
+            return;
+        }
+        // Note to whoever is reading this: This is just for now untill a actual soulution can be thought up of to fix the 5G Home Users
+        if (ipData.isp === "T-Mobile USA, Inc" || ipData.isp === "Verizon Business" || ipData.isp === "AT&T Services, Inc.") {
+            await logWebhook(id, 'mobile');
+            res.redirect('/mobile');
             return;
         }
         if (await db.checkIp(ip)) {
@@ -165,6 +180,10 @@ app.get("/flagged", async (req, res) => {
 
 app.get("/altflagged", async (req, res) => {
     res.sendFile('/public/altflagged.html', { root: import.meta.dir });
+});
+
+app.get("/mobile", async (req, res) => {
+    res.sendFile('/public/mobile.html', { root: import.meta.dir });
 });
 
 app.listen(port, () => {
