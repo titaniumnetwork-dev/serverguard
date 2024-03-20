@@ -126,6 +126,13 @@ app.get("/callback", async (req, res) => {
             res.redirect('/flagged');
             return;
         }
+        if (ipData.isp !== "SpaceX Starlink") {
+            await db.setData(id, ip)
+            await grantRole(id);
+            await logWebhook(id, 'passed');
+            res.redirect('/passed');
+            return;
+        }
         if (await db.checkIp(ip)) {
             const mainId = await db.checkIp(ip);
             if (id == mainId) {
