@@ -53,9 +53,9 @@ export default {
 
     const targetMember = await interaction.guild.members.fetch(interaction.options.getUser("user").id);
 
-    if (targetMember.roles.cache.has(verifiedRole.id)) {
+    if (targetMember.roles.cache.has(verifiedRole.id) || db.checkIp(ip)) {
       return interaction.reply({
-        content: `${targetMember.user.globalName} is already verified.`,
+        content: `${targetMember.user.globalName} or their IP is already verified.`,
         ephemeral: true,
       });
     }
