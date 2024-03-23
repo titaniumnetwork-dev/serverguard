@@ -55,16 +55,16 @@ export default {
 
     if (targetMember.roles.cache.has(verifiedRole.id)) {
       return interaction.reply({
-        content: `${targetUser.username} is already verified.`,
+        content: `${targetMember.user.globalName} is already verified.`,
         ephemeral: true,
       });
     }
 
-    await db.setData(targetUser.id, ip);
+    await db.setData(targetMember.id, ip);
     await targetMember.roles.add(verifiedRole);
 
     return interaction.reply({
-      content: `${targetUser.username} has been verified and granted the ${verifiedRole.name} role.`,
+      content: `${targetMember.id} has been verified and granted the ${verifiedRole.name} role.`,
       ephemeral: true,
     });
   },
