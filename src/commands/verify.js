@@ -65,7 +65,7 @@ export default {
 
     return interaction.reply({
       content: `${targetMember.id} has been verified and granted the ${verifiedRole.name} role.`,
-      ephemeral: true,
+      ephemeral: false,
     });
   },
 };
