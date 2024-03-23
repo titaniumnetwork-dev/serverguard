@@ -41,8 +41,6 @@ export default {
         ephemeral: true,
       });
     }
-
-    const targetUser = interaction.options.getUser("user");
     const ip = interaction.options.getString("ip");
 
     if (!isValidIP(ip)) {
@@ -53,7 +51,7 @@ export default {
       });
     }
 
-    const targetMember = await interaction.guild.members.fetch(targetUser.id);
+    const targetMember = await interaction.guild.members.fetch(interaction.options.getUser("user").id);
 
     if (targetMember.roles.cache.has(verifiedRole.id)) {
       return interaction.reply({
