@@ -24,10 +24,19 @@ async function grantRole(id) {
             member.roles.add(process.env.ROLE_ID);
             console.log('Added role to ' + id);
         }
+        // Comment out this "if" statement if you don't need to give multiple roles
         if (!member.roles.cache.some(role => role.id === process.env.ROLE_ID_2)) {
             member.roles.add(process.env.ROLE_ID_2);
             console.log('Added role to ' + id);
         }
+    }
+}
+
+async function checkAlt(id) {
+    const guild = await client.guilds.fetch(process.env.GUILD_ID);
+    if (await guild.members.fetch(id).catch(() => false)) {
+        const member = await guild.members.fetch(id);
+        return member.roles.cache.some(role => role.id === process.env.ALT_ROLE_ID);
     }
 }
 
@@ -130,6 +139,16 @@ app.get("/callback", async (req, res) => {
         const ip = req.headers['cf-connecting-ip'];
 
         const ipData = await getIpData(ip);
+        if (await checkAlt(id)) {
+            console.log('alt role');
+            res.redirect('/flagged');
+            return;
+        }
+        if (ipData.mobile === true || ipData.proxy === true || ipData.hosting === true) {
+            await logWebhook(id, 'proxy');
+            res.redirect('/flagged');
+            return;
+        }
         if (ipData.mobile === true || ipData.isp === "T-Mobile USA, Inc" || ipData.isp === "Verizon Business" || ipData.isp === "AT&T Services, Inc.") {
             await logWebhook(id, 'mobile');
             return res.redirect('/mobile');
@@ -186,4 +205,3 @@ app.get("/mobile", async (req, res) => {
 app.listen(port, () => {
     console.log(`Listening on port ${port}...`);
 });
-
