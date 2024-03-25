@@ -35,14 +35,6 @@ export default {
     }
     const ip = interaction.options.getString("ip");
 
-    if (!isValidIP(ip)) {
-      return interaction.reply({
-        content:
-          "Invalid IP address provided. Please enter a valid IPv4 address.",
-        ephemeral: true,
-      });
-    }
-
     const targetMember = await interaction.guild.members.fetch(interaction.options.getUser("user").id);
 
     if (targetMember.roles.cache.has(verifiedRole.id) || db.checkIp(ip)) {
@@ -61,9 +53,3 @@ export default {
     });
   },
 };
-
-function isValidIP(ip) {
-  const ipRegex =
-    /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
-  return ipRegex.test(ip);
-}
