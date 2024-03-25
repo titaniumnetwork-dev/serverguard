@@ -37,9 +37,11 @@ export default {
 
     const targetMember = await interaction.guild.members.fetch(interaction.options.getUser("user").id);
 
-    if (db.checkIp(ip)) {
+    const mainId = db.checkIp(ip);
+
+    if (mainId) {
       return interaction.reply({
-        content: `${targetMember.user.globalName} or their IP is already verified.`,
+        content: `${targetMember.user.globalName}'s IP is already verified as <@!${mainId}>.`,
         ephemeral: true,
       });
     }
