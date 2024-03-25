@@ -130,23 +130,20 @@ app.get("/callback", async (req, res) => {
         const ip = req.headers['cf-connecting-ip'];
 
         const ipData = await getIpData(ip);
-        if (ipData.mobile === true || ipData.proxy === true || ipData.hosting === true) {
+        if (ipData.mobile === true || ipData.isp === "T-Mobile USA, Inc" || ipData.isp === "Verizon Business" || ipData.isp === "AT&T Services, Inc.") {
+            await logWebhook(id, 'mobile');
+            return res.redirect('/mobile');
+        }
+        if (ipData.proxy === true || ipData.hosting === true) {
             await logWebhook(id, 'proxy');
-            res.redirect('/flagged');
-            return;
+            return res.redirect('/flagged');
         }
         if (ipData.isp === "SpaceX Starlink") {
-            await db.setData(id, ip)
+            await db.setData(id, ip);
             await grantRole(id);
             await logWebhook(id, 'passed');
-            res.redirect('/passed');
-            return;
-        }
-        // Note to whoever is reading this: This is just for now untill a actual soulution can be thought up of to fix the 5G Home Users
-        if (ipData.isp === "T-Mobile USA, Inc" || ipData.isp === "Verizon Business" || ipData.isp === "AT&T Services, Inc.") {
-            await logWebhook(id, 'mobile');
-            res.redirect('/mobile');
-            return;
+            return res.redirect('/passed');
+            // Note to whoever is reading this: This is just for now until an actual solution can be thought up of to fix the 5G Home Users
         }
         if (await db.checkIp(ip)) {
             const mainId = await db.checkIp(ip);
