@@ -37,7 +37,7 @@ export default {
 
     const targetMember = await interaction.guild.members.fetch(interaction.options.getUser("user").id);
 
-    const mainId = db.checkIp(ip);
+    const mainId = await db.checkIp(ip);
 
     if (mainId) {
       return interaction.reply({
