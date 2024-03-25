@@ -36,7 +36,7 @@ async function checkAlt(id) {
     const guild = await client.guilds.fetch(process.env.GUILD_ID);
     if (await guild.members.fetch(id).catch(() => false)) {
         const member = await guild.members.fetch(id);
-        return member.roles.cache.some(role => role.id === process.env.ALT_ROLE);
+        return member.roles.cache.some(role => role.id === process.env.ALT_ROLE_ID);
     }
 }
 
