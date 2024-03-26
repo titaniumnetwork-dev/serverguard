@@ -63,14 +63,14 @@ export async function deletePending() {
     try {
         const result = await client.query({
             rowMode: 'array',
-            // text: 'DELETE FROM userdata WHERE id IN (select id from pending);'
             text: 'SELECT id FROM pending;'
         });
-        if (result.rowCount !== 0) {
-            await client.query("DELETE FROM userdata WHERE id = ANY ($1);", [result.rows.map(row => row[0])]);
+        const ids = result.rows.map(row => row[0]);
+        if (ids.length) {
+            await client.query("DELETE FROM userdata WHERE id = ANY ($1);", [ids]);
         }
         await client.query("TRUNCATE table pending;");
-        return result.rows;
+        return ids;
     } catch (err) {
         console.log(err);
     }
