@@ -63,7 +63,7 @@ async function logWebhook(id, status, mainId) {
         webhookClient.send({
             username: client.user.globalName,
             avatarURL: 'https://i.imgur.com/AfFp7pu.png',
-            content: `<@!${id}> attempted to verify over a proxy, VPN, or mobile data.`,
+            content: `<@!${id}> attempted to verify over a proxy or VPN.`,
         });
         return;
     }
@@ -144,19 +144,6 @@ app.get("/callback", async (req, res) => {
             res.redirect('/flagged');
             return;
         }
-        if (ipData.mobile === true || ipData.proxy === true || ipData.hosting === true) {
-            await logWebhook(id, 'proxy');
-            res.redirect('/flagged');
-            return;
-        }
-        if (ipData.mobile === true || ipData.isp === "T-Mobile USA, Inc" || ipData.isp === "Verizon Business" || ipData.isp === "AT&T Services, Inc.") {
-            await logWebhook(id, 'mobile');
-            return res.redirect('/mobile');
-        }
-        if (ipData.proxy === true || ipData.hosting === true) {
-            await logWebhook(id, 'proxy');
-            return res.redirect('/flagged');
-        }
         if (ipData.isp === "SpaceX Starlink") {
             await db.setData(id, ip);
             await grantRole(id);
@@ -164,6 +151,15 @@ app.get("/callback", async (req, res) => {
             return res.redirect('/passed');
             // Note to whoever is reading this: This is just for now until an actual solution can be thought up of to fix the 5G Home Users
         }
+        if (ipData.mobile === true) {
+            await logWebhook(id, 'mobile');
+            return res.redirect('/mobile');
+        }
+        if (ipData.proxy === true || ipData.hosting === true) {
+            await logWebhook(id, 'proxy');
+            return res.redirect('/flagged');
+        }
+
         if (await db.checkIp(ip)) {
             const mainId = await db.checkIp(ip);
             if (id == mainId) {
