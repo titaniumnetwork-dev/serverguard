@@ -8,11 +8,18 @@ export const pool = new Pool({
     port: process.env.DB_PORT,
 });
 
+function hashIp(ip) {
+    const hash = crypto.createHash('sha256');
+    hash.update(process.env.SALT);
+    hash.update(ip);
+    return hash.digest('base64');
+}
+
 export async function checkIp(ip) {
     const client = await pool.connect();
     try {
-        const hashed = crypto.createHash('sha256').update(process.env.SALT + ip).digest('base64');
-        const res = await client.query("SELECT id FROM userdata WHERE ip = $1;", [hashed]);
+        const hashedIp = hashIp(ip);
+        const res = await client.query("SELECT id FROM userdata WHERE ip = $1;", [hashedIp]);
         if (res.rowCount !== 0) {
             return res.rows[0].id;
         }
@@ -27,7 +34,7 @@ export async function checkIp(ip) {
 export async function setData(id, ip) {
     const client = await pool.connect();
     try {
-        const hashedIp = crypto.createHash('sha256').update(process.env.SALT + ip).digest('base64');
+        const hashedIp = hashIp(ip);
         await client.query("INSERT INTO userdata VALUES($1,$2);", [id,hashedIp]);
     } catch (err) {
         console.error(err);
