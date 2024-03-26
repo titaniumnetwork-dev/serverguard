@@ -63,7 +63,16 @@ async function logWebhook(id, status, mainId) {
         webhookClient.send({
             username: client.user.globalName,
             avatarURL: 'https://i.imgur.com/AfFp7pu.png',
-            content: `<@!${id}> attempted to verify over a proxy, VPN, or mobile data.`,
+            content: `<@!${id}> attempted to verify over a proxy or VPN.`,
+        });
+        return;
+    }
+
+    if (status === 'mobile') {
+        webhookClient.send({
+            username: client.user.globalName,
+            avatarURL: 'https://i.imgur.com/AfFp7pu.png',
+            content: `<@!${id}> Is trying to verify over a potential mobile data connection.`,
         });
         return;
     }
@@ -117,7 +126,7 @@ app.get("/login", (req, res) => {
 
 app.get("/callback", async (req, res) => {
     if (req.query.code === undefined) {
-        res.status(401).send('Unauthorized');
+        res.status(401).sendFile('/public/error.html')
         return;
     }
     const callbackState = req.query.state;
@@ -135,11 +144,22 @@ app.get("/callback", async (req, res) => {
             res.redirect('/flagged');
             return;
         }
-        if (ipData.mobile === true || ipData.proxy === true || ipData.hosting === true) {
-            await logWebhook(id, 'proxy');
-            res.redirect('/flagged');
-            return;
+        if (ipData.isp === "SpaceX Starlink") {
+            await db.setData(id, ip);
+            await grantRole(id);
+            await logWebhook(id, 'passed');
+            return res.redirect('/passed');
+            // Note to whoever is reading this: This is just for now until an actual solution can be thought up of to fix the 5G Home Users
         }
+        if (ipData.mobile === true) {
+            await logWebhook(id, 'mobile');
+            return res.redirect('/mobile');
+        }
+        if (ipData.proxy === true || ipData.hosting === true) {
+            await logWebhook(id, 'proxy');
+            return res.redirect('/flagged');
+        }
+
         if (await db.checkIp(ip)) {
             const mainId = await db.checkIp(ip);
             if (id == mainId) {
@@ -148,7 +168,8 @@ app.get("/callback", async (req, res) => {
                 return;
             }
             await logWebhook(id, 'alt', mainId);
-            res.redirect('/flagged');
+            await client.roles.add(process.env.ALT_ROLE_ID);
+            res.redirect('/altflagged');
             return;
         }
         await db.setData(id, ip)
@@ -169,7 +190,14 @@ app.get("/flagged", async (req, res) => {
     res.sendFile('/public/flagged.html', { root: import.meta.dir });
 });
 
+app.get("/altflagged", async (req, res) => {
+    res.sendFile('/public/altflagged.html', { root: import.meta.dir });
+});
+
+app.get("/mobile", async (req, res) => {
+    res.sendFile('/public/mobile.html', { root: import.meta.dir });
+});
+
 app.listen(port, () => {
     console.log(`Listening on port ${port}...`);
 });
-
