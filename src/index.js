@@ -9,73 +9,12 @@ import session from 'express-session';
 import crypto from 'crypto';
 import * as db from './util/db.js';
 import * as oauth from './util/oauth.js';
+import { checkRole, grantRole, logWebhook } from './util/discordManager.js';
 
 async function getIpData(ip) {
     const query = await fetch(`http://ip-api.com/json/${ip}?fields=16990208`);
     const data = await query.json();
     return data;
-}
-
-async function grantRole(id) {
-    const guild = await client.guilds.fetch(process.env.GUILD_ID);
-    if (await guild.members.fetch(id).catch(() => false)) {
-        const member = await guild.members.fetch(id);
-        if (!member.roles.cache.some(role => role.id === process.env.ROLE_ID)) {
-            member.roles.add(process.env.ROLE_ID);
-            console.log('Added role to ' + id);
-        }
-        // Comment out this "if" statement if you don't need to give multiple roles
-        if (!member.roles.cache.some(role => role.id === process.env.ROLE_ID_2)) {
-            member.roles.add(process.env.ROLE_ID_2);
-            console.log('Added role to ' + id);
-        }
-    }
-}
-
-async function checkAlt(id) {
-    const guild = await client.guilds.fetch(process.env.GUILD_ID);
-    if (await guild.members.fetch(id).catch(() => false)) {
-        const member = await guild.members.fetch(id);
-        return member.roles.cache.some(role => role.id === process.env.ALT_ROLE_ID);
-    }
-}
-
-async function logWebhook(id, status, mainId) {
-    const webhookClient = new WebhookClient({ url: process.env.WEBHOOK_URL });
-    if (status === 'passed') {
-        webhookClient.send({
-            username: client.user.globalName,
-            avatarURL: 'https://i.imgur.com/AfFp7pu.png',
-            content: `<@!${id}> has successfully verified.`,
-        });
-        return;
-    }
-    if (status === 'alt') {
-        webhookClient.send({
-            username: client.user.globalName,
-            avatarURL: 'https://i.imgur.com/AfFp7pu.png',
-            content: `<@!${id}> was flagged as an alt account. Their main is <@!${mainId}>.`,
-        });
-        return;
-    }
-
-    if (status === 'proxy') {
-        webhookClient.send({
-            username: client.user.globalName,
-            avatarURL: 'https://i.imgur.com/AfFp7pu.png',
-            content: `<@!${id}> attempted to verify over a proxy or VPN.`,
-        });
-        return;
-    }
-
-    if (status === 'mobile') {
-        webhookClient.send({
-            username: client.user.globalName,
-            avatarURL: 'https://i.imgur.com/AfFp7pu.png',
-            content: `<@!${id}> Is trying to verify over a potential mobile data connection.`,
-        });
-        return;
-    }
 }
 
 // Initialize the Discord client
@@ -91,11 +30,15 @@ const client = new Client({
     ]
 });
 
+// Add your member roles to this array
+const memberRoles = [process.env.ROLE_ID, process.env.ROLE_ID_2];
+
+// Add your flagged alt account roles to this array. Comment this line out if you're not using it. Make sure to also comment out the grantRole function that grants this role.
+const altRole = process.env.ALT_ROLE_ID;
+
 // Initizalize the Express server
 const app = express();
 const port = 3113;
-
-// Connect to the database (connection pooling)
 
 // Load the events and commands
 const events = await loadEvents(new URL('events/', import.meta.url));
@@ -106,6 +49,7 @@ registerEvents(commands, events, client);
 
 // Login to the client
 void client.login(process.env.DISCORD_TOKEN);
+const guild = await client.guilds.fetch(process.env.GUILD_ID);
 const secret = crypto.randomBytes(64).toString('hex');
 const authURL = `https://discord.com/api/oauth2/authorize?client_id=${process.env.CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(process.env.REDIRECT_URI)}&scope=identify&state=`
 
@@ -136,45 +80,44 @@ app.get("/callback", async (req, res) => {
         const user = await oauth.getUserData(token);
         const id = user.id;
         await oauth.invalidateToken(token);
-        const ip = req.headers['cf-connecting-ip'];
+        // const ip = req.headers['cf-connecting-ip'];
+        const ip = '0.0.0.0'
 
         const ipData = await getIpData(ip);
-        if (await checkAlt(id)) {
+        if (await checkRole(guild, id, altRole)) {
             console.log('alt role');
-            res.redirect('/flagged');
-            return;
+            return res.redirect('/flagged');
         }
         if (ipData.isp === "SpaceX Starlink") {
             await db.setData(id, ip);
-            await grantRole(id);
-            await logWebhook(id, 'passed');
+            await grantRole(guild, id, memberRoles);
+            await logWebhook(client, id, 'passed');
             return res.redirect('/passed');
-            // Note to whoever is reading this: This is just for now until an actual solution can be thought up of to fix the 5G Home Users
+            // This is just for now until an actual solution can be thought up of to fix the 5G Home Users
         }
         if (ipData.mobile === true) {
-            await logWebhook(id, 'mobile');
+            await logWebhook(client, id, 'mobile');
             return res.redirect('/mobile');
         }
         if (ipData.proxy === true || ipData.hosting === true) {
-            await logWebhook(id, 'proxy');
+            await logWebhook(client, id, 'proxy');
             return res.redirect('/flagged');
         }
 
         if (await db.checkIp(ip)) {
             const mainId = await db.checkIp(ip);
-            if (id == mainId) {
-                await grantRole(id);
-                res.redirect('/passed');
-                return;
-            }
-            await logWebhook(id, 'alt', mainId);
-            await client.roles.add(process.env.ALT_ROLE_ID);
-            res.redirect('/altflagged');
-            return;
+            // if (id == mainId) {
+            //     await grantRole(guild, id, memberRoles);
+            //     res.redirect('/passed');
+            //     return;
+            // }
+            await logWebhook(client, id, 'alt', mainId);
+            grantRole(guild, id, altRole);
+            return res.redirect('/altflagged');
         }
         await db.setData(id, ip)
-        await grantRole(id);
-        await logWebhook(id, 'passed');
+        await grantRole(guild, id, memberRoles);
+        await logWebhook(client, id, 'passed');
         res.redirect('/passed');
     }
     else {
