@@ -3,7 +3,6 @@ import { URL } from 'node:url';
 import { Client, GatewayIntentBits, Partials } from 'discord.js';
 import { loadCommands, loadEvents } from './util/loaders.js';
 import { registerEvents } from './util/registerEvents.js';
-import { WebhookClient } from 'discord.js';
 import express from 'express';
 import session from 'express-session';
 import crypto from 'crypto';
@@ -80,8 +79,7 @@ app.get("/callback", async (req, res) => {
         const user = await oauth.getUserData(token);
         const id = user.id;
         await oauth.invalidateToken(token);
-        // const ip = req.headers['cf-connecting-ip'];
-        const ip = '0.0.0.0'
+        const ip = req.headers['cf-connecting-ip'];
 
         const ipData = await getIpData(ip);
         if (await checkRole(guild, id, altRole)) {
@@ -106,11 +104,10 @@ app.get("/callback", async (req, res) => {
 
         if (await db.checkIp(ip)) {
             const mainId = await db.checkIp(ip);
-            // if (id == mainId) {
-            //     await grantRole(guild, id, memberRoles);
-            //     res.redirect('/passed');
-            //     return;
-            // }
+            if (id == mainId) {
+                await grantRole(guild, id, memberRoles);
+                return res.redirect('/passed');
+            }
             await logWebhook(client, id, 'alt', mainId);
             grantRole(guild, id, altRole);
             return res.redirect('/altflagged');
