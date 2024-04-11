@@ -35,6 +35,10 @@ const memberRoles = [process.env.ROLE_ID, process.env.ROLE_ID_2];
 // Add your flagged alt account roles to this array. Comment this line out if you're not using it. Make sure to also comment out the grantRole function that grants this role.
 const altRole = process.env.ALT_ROLE_ID;
 
+// Add your muted roles
+
+const mutedRole = process.env.MUTED_ROLE_ID;
+
 // Initizalize the Express server
 const app = express();
 const port = 3113;
@@ -82,6 +86,10 @@ app.get("/callback", async (req, res) => {
         const ip = req.headers['cf-connecting-ip'];
 
         const ipData = await getIpData(ip);
+        if (await checkRole(guild, id, mutedRole)) {
+            console.log('alt role');
+            return res.redirect('/flagged');
+        }
         if (await checkRole(guild, id, altRole)) {
             console.log('alt role');
             return res.redirect('/flagged');
