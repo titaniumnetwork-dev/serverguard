@@ -9,7 +9,7 @@
 
 :before,
 :after {
-  --tw-content: "";
+  --tw-content: '';
 }
 
 html,
@@ -23,10 +23,10 @@ html,
     ui-sans-serif,
     system-ui,
     sans-serif,
-    "Apple Color Emoji",
-    "Segoe UI Emoji",
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
     Segoe UI Symbol,
-    "Noto Color Emoji";
+    'Noto Color Emoji';
   font-feature-settings: normal;
   font-variation-settings: normal;
   -webkit-tap-highlight-color: transparent;
@@ -134,9 +134,9 @@ select {
 }
 
 button,
-[type="button"],
-[type="reset"],
-[type="submit"] {
+[type='button'],
+[type='reset'],
+[type='submit'] {
   -webkit-appearance: button;
   background-color: transparent;
   background-image: none;
@@ -159,7 +159,7 @@ progress {
   height: auto;
 }
 
-[type="search"] {
+[type='search'] {
   -webkit-appearance: textfield;
   outline-offset: -2px;
 }
@@ -231,7 +231,7 @@ textarea::placeholder {
 }
 
 button,
-[role="button"] {
+[role='button'] {
   cursor: pointer;
 }
 

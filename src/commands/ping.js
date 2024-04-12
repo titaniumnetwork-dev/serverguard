@@ -1,10 +1,10 @@
 /** @type {import('./index.js').Command} */
 export default {
   data: {
-    name: "ping",
-    description: "Ping!",
+    name: 'ping',
+    description: 'Ping!',
   },
   async execute(interaction) {
-    await interaction.reply("Pong!");
+    await interaction.reply('Pong!');
   },
 };

@@ -14,8 +14,8 @@
  */
 export const predicate = (structure) =>
   Boolean(structure) &&
-  typeof structure === "object" &&
-  "data" in structure &&
-  "execute" in structure &&
-  typeof structure.data === "object" &&
-  typeof structure.execute === "function";
+  typeof structure === 'object' &&
+  'data' in structure &&
+  'execute' in structure &&
+  typeof structure.data === 'object' &&
+  typeof structure.execute === 'function';

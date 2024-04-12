@@ -2,24 +2,24 @@ import {
   SlashCommandBuilder,
   PermissionFlagsBits,
   ChatInputCommandInteraction,
-} from "discord.js";
-import * as db from "../util/db.js";
+} from 'discord.js';
+import * as db from '../util/db.js';
 
 /** @type {import('./index.js').Command} */
 export default {
   data: new SlashCommandBuilder()
-    .setName("verify")
-    .setDescription("Verify a user and IP address")
+    .setName('verify')
+    .setDescription('Verify a user and IP address')
     .addUserOption((option) =>
       option
-        .setName("user")
-        .setDescription("The user to verify")
+        .setName('user')
+        .setDescription('The user to verify')
         .setRequired(true),
     )
     .addStringOption((option) =>
       option
-        .setName("ip")
-        .setDescription("The IP address to verify")
+        .setName('ip')
+        .setDescription('The IP address to verify')
         .setRequired(true),
     ),
   async execute(interaction) {
@@ -29,14 +29,14 @@ export default {
     if (!verifiedRole) {
       return interaction.reply({
         content:
-          "The verified role could not be found. Please check the role ID in the environment variables.",
+          'The verified role could not be found. Please check the role ID in the environment variables.',
         ephemeral: true,
       });
     }
-    const ip = interaction.options.getString("ip");
+    const ip = interaction.options.getString('ip');
 
     const targetMember = await interaction.guild.members.fetch(
-      interaction.options.getUser("user").id,
+      interaction.options.getUser('user').id,
     );
 
     const mainId = await db.checkIp(ip);

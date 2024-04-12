@@ -1,5 +1,5 @@
-import { Events } from "discord.js";
-import { pendingDeletion, cancelPending } from "./db.js";
+import { Events } from 'discord.js';
+import { pendingDeletion, cancelPending } from './db.js';
 
 /**
  * @param {Map<string, import('../commands/index.js').Command>} commands
@@ -31,8 +31,8 @@ export function registerEvents(commands, events, client) {
       if (newlyCreated) {
         const messages = await thread.messages.fetch();
         const firstMessage = messages.first();
-        firstMessage.react("👍"); // Thumbs Up
-        firstMessage.react("👎"); // Thumbs Down
+        firstMessage.react('👍'); // Thumbs Up
+        firstMessage.react('👎'); // Thumbs Down
       }
     },
   };
@@ -60,7 +60,7 @@ export function registerEvents(commands, events, client) {
     memberJoinEvent,
     memberRemoveEvent,
   ]) {
-    client[event.once ? "once" : "on"](event.name, async (...args) =>
+    client[event.once ? 'once' : 'on'](event.name, async (...args) =>
       event.execute(...args),
     );
   }
