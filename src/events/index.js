@@ -15,9 +15,9 @@
  * @returns {structure is Event}
  */
 export const predicate = (structure) =>
-	Boolean(structure) &&
-	typeof structure === 'object' &&
-	'name' in structure &&
-	'execute' in structure &&
-	typeof structure.name === 'string' &&
-	typeof structure.execute === 'function';
+  Boolean(structure) &&
+  typeof structure === "object" &&
+  "name" in structure &&
+  "execute" in structure &&
+  typeof structure.name === "string" &&
+  typeof structure.execute === "function";

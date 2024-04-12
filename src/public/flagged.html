@@ -1,53 +1,97 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <title>ProxyGuard</title>
+    <link rel="stylesheet" crossorigin href="/assets/style-9WvnCHTS.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-    rel="stylesheet">
-  <title>ProxyGuard</title>
-  <link rel="stylesheet" crossorigin href="/assets/style-9WvnCHTS.css">
-</head>
-
-<body class="h-screen w-screen relative bg-[#151923]">
-  <div class="h-screen w-screen flex bg-transparent items-center justify-center">
-    <div class="flex flex-col items-center gap-4">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-        class="h-32 w-32 text-yellow-400">
-        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
-        <path d="M12 9v4" />
-        <path d="M12 17h.01" />
-      </svg>
-      <h1 class="text-5xl font-extrabold text-yellow-400">Flagged</h1>
-      <p class="text-gray-300">Verification failed. We only permit residential networks; no mobile data, VPN, or proxy
-        connections.</p>
-      <a href="/login">
-        <button
-          class="p-3 w-48 bg-yellow-400 hover:brightness-90 transition-all duration-100 active:scale-95 text-zinc-950 font-medium rounded-lg">Retry</button>
-      </a>
+  <body class="h-screen w-screen relative bg-[#151923]">
+    <div
+      class="h-screen w-screen flex bg-transparent items-center justify-center"
+    >
+      <div class="flex flex-col items-center gap-4">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="h-32 w-32 text-yellow-400"
+        >
+          <path
+            d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"
+          />
+          <path d="M12 9v4" />
+          <path d="M12 17h.01" />
+        </svg>
+        <h1 class="text-5xl font-extrabold text-yellow-400">Flagged</h1>
+        <p class="text-gray-300">
+          Verification failed. We only permit residential networks; no mobile
+          data, VPN, or proxy connections.
+        </p>
+        <a href="/login">
+          <button
+            class="p-3 w-48 bg-yellow-400 hover:brightness-90 transition-all duration-100 active:scale-95 text-zinc-950 font-medium rounded-lg"
+          >
+            Retry
+          </button>
+        </a>
+      </div>
     </div>
 
-  </div>
-
-
-  <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28"
-    preserveAspectRatio="none" shape-rendering="auto">
-    <defs>
-      <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
-    </defs>
-    <g class="parallax">
-      <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(86,103,145,0.1" />
-      <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(86,103,145,0.1)" />
-      <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(86,103,145,0.1)" />
-      <use xlink:href="#gentle-wave" x="48" y="7" fill="rgba(86,103,145,0.1)" />
-    </g>
-  </svg>
-</body>
-
+    <svg
+      class="waves"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      viewBox="0 24 150 28"
+      preserveAspectRatio="none"
+      shape-rendering="auto"
+    >
+      <defs>
+        <path
+          id="gentle-wave"
+          d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"
+        />
+      </defs>
+      <g class="parallax">
+        <use
+          xlink:href="#gentle-wave"
+          x="48"
+          y="0"
+          fill="rgba(86,103,145,0.1"
+        />
+        <use
+          xlink:href="#gentle-wave"
+          x="48"
+          y="3"
+          fill="rgba(86,103,145,0.1)"
+        />
+        <use
+          xlink:href="#gentle-wave"
+          x="48"
+          y="5"
+          fill="rgba(86,103,145,0.1)"
+        />
+        <use
+          xlink:href="#gentle-wave"
+          x="48"
+          y="7"
+          fill="rgba(86,103,145,0.1)"
+        />
+      </g>
+    </svg>
+  </body>
 </html>

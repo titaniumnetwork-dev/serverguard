@@ -14,17 +14,17 @@ export default {
       option
         .setName("user")
         .setDescription("The user to verify")
-        .setRequired(true)
+        .setRequired(true),
     )
     .addStringOption((option) =>
       option
         .setName("ip")
         .setDescription("The IP address to verify")
-        .setRequired(true)
+        .setRequired(true),
     ),
   async execute(interaction) {
     const verifiedRole = interaction.guild.roles.cache.find(
-      (role) => role.id === process.env.ROLE_ID
+      (role) => role.id === process.env.ROLE_ID,
     );
     if (!verifiedRole) {
       return interaction.reply({
@@ -35,7 +35,9 @@ export default {
     }
     const ip = interaction.options.getString("ip");
 
-    const targetMember = await interaction.guild.members.fetch(interaction.options.getUser("user").id);
+    const targetMember = await interaction.guild.members.fetch(
+      interaction.options.getUser("user").id,
+    );
 
     const mainId = await db.checkIp(ip);
 
