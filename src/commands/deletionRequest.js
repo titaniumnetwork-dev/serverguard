@@ -31,9 +31,9 @@ export default {
                     .setTitle('Success!')
                     .setDescription('You have successfully submitted a data deletion request. Note that we process requests on the first of each month.')
                     .setColor('#600080');
-                await interaction.editReply({ embeds: [successEmbed]});
+                await interaction.editReply({ embeds: [successEmbed], components: []});
             } else if (i.customId === 'deny') {
-                await interaction.editReply({ content: 'Deletion request cancelled.'});
+                await interaction.editReply({ content: 'Deletion request cancelled.', components: []});
             }
         });
         collector.on('end', () => {
