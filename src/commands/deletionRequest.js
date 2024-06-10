@@ -1,4 +1,4 @@
-import { EmbedBuilder, MessageActionRow, MessageButton } from 'discord.js';
+import { EmbedBuilder, ActionRowBuilder, ButtonBuilder } from 'discord.js';
 import { pendingDeletion } from '../util/db.js';
 
 /** @type {import('./index.js').Command} */
@@ -12,15 +12,15 @@ export default {
             .setTitle('Confirmation')
             .setDescription('Are you sure you want to request the deletion of your data?')
             .setColor('#600080');
-        const confirmButton = new MessageButton()
+        const confirmButton = new ButtonBuilder()
             .setCustomId('confirm')
             .setLabel('Yes')
             .setStyle('SUCCESS');
-        const denyButton = new MessageButton()
+        const denyButton = new ButtonBuilder()
             .setCustomId('deny')
             .setLabel('No')
             .setStyle('DANGER');
-        const row = new MessageActionRow().addComponents(confirmButton, denyButton);
+        const row = new ActionRowBuilder().addComponents(confirmButton, denyButton);
         const confirmationMessage = await interaction.reply({ embeds: [confirmationEmbed], components: [row], ephemeral: true });
         const filter = i => i.customId === 'confirm' || i.customId === 'deny';
         const collector = interaction.channel.createMessageComponentCollector({ filter });

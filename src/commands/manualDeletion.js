@@ -12,7 +12,7 @@ export default {
         const user = interaction.options.getMember('user');
         const userId = user.id;
         await deleteData(userId)
-            .then(() => {
+            .then(async () => {
                 const member = await interaction.guild.members.fetch(userId);
                 if (member.roles.cache.some(role => role.id === process.env.ROLE_ID)) {
                     member.roles.remove(process.env.ROLE_ID);
