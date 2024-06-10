@@ -9,6 +9,7 @@ export default {
     dm_permission: false,
   },
   async execute(interaction) {
+    await interaction.deferReply();
     const result = await deletePending();
     for (const id of result) {
       if (await interaction.guild.members.fetch(id).catch((err) => false)) {
@@ -29,6 +30,6 @@ export default {
         `All users that have requested deletion of their data have been cleared from the database and their roles removed. We have processed ${result.length} requests.`,
       )
       .setColor('#600080');
-    await interaction.reply({ embeds: [embed], ephemeral: false });
+    await interaction.editReply({ embeds: [embed], ephemeral: false });
   },
 };
