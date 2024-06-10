@@ -1,4 +1,4 @@
-import { EmbedBuilder, ActionRowBuilder, ButtonBuilder } from 'discord.js';
+import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 import { pendingDeletion } from '../util/db.js';
 
 /** @type {import('./index.js').Command} */
@@ -15,11 +15,11 @@ export default {
         const confirmButton = new ButtonBuilder()
             .setCustomId('confirm')
             .setLabel('Yes')
-            .setStyle('SUCCESS');
+            .setStyle(ButtonStyle.Success);
         const denyButton = new ButtonBuilder()
             .setCustomId('deny')
             .setLabel('No')
-            .setStyle('DANGER');
+            .setStyle(ButtonStyle.Danger);
         const row = new ActionRowBuilder().addComponents(confirmButton, denyButton);
         const confirmationMessage = await interaction.reply({ embeds: [confirmationEmbed], components: [row], ephemeral: true });
         const filter = i => i.customId === 'confirm' || i.customId === 'deny';
@@ -31,9 +31,9 @@ export default {
                     .setTitle('Success!')
                     .setDescription('You have successfully submitted a data deletion request. Note that we process requests on the first of each month.')
                     .setColor('#600080');
-                await interaction.editReply({ embeds: [successEmbed], components: [] });
+                await interaction.editReply({ embeds: [successEmbed]});
             } else if (i.customId === 'deny') {
-                await interaction.editReply({ content: 'Deletion request cancelled.', components: [] });
+                await interaction.editReply({ content: 'Deletion request cancelled.'});
             }
         });
         collector.on('end', () => {
