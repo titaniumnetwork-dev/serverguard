@@ -1,4 +1,4 @@
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { deleteData } from '../util/db.js';
 
 /** @type {import('./index.js').Command} */
