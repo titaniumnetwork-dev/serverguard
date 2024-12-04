@@ -86,12 +86,10 @@ app.get('/callback', async (req, res) => {
 
     const ipData = await getIpData(ip);
     if (await checkRole(guild, id, mutedRole)) {
-      console.log('alt role');
       return res.redirect('/flagged');
     }
     if (await checkRole(guild, id, altRole)) {
-      console.log('alt role');
-      return res.redirect('/flagged');
+      return res.redirect('/altflagged');
     }
     if (ipData.isp === 'SpaceX Starlink') {
       await db.setData(id, ip);
