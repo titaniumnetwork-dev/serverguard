@@ -9,7 +9,7 @@ export default {
     .addUserOption((option) =>
       option
         .setName('user')
-        .setDescription('The user to earase from the DB')
+        .setDescription('The user to erase from the DB')
         .setRequired(true),
     ),
     async execute(interaction) {
