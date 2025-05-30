@@ -8,13 +8,8 @@ import session from 'express-session';
 import crypto from 'crypto';
 import * as db from './util/db.js';
 import * as oauth from './util/oauth.js';
+import { getIpData } from './util/ip.js';
 import { checkRole, grantRole, logWebhook } from './util/discordManager.js';
-
-async function getIpData(ip) {
-  const query = await fetch(`http://ip-api.com/json/${ip}?fields=16990208`);
-  const data = await query.json();
-  return data;
-}
 
 // Initialize the Discord client
 const client = new Client({
@@ -28,7 +23,7 @@ const client = new Client({
 });
 
 // Add your member roles to this array
-const memberRoles = [process.env.ROLE_ID, process.env.ROLE_ID_2];
+export const memberRoles = [process.env.ROLE_ID, process.env.ROLE_ID_2];
 
 // Add your flagged alt account roles to this array. Comment this line out if you're not using it. Make sure to also comment out the grantRole function that grants this role.
 const altRole = process.env.ALT_ROLE_ID;

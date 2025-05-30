@@ -3,6 +3,8 @@ import {
   PermissionFlagsBits,
   ChatInputCommandInteraction,
 } from 'discord.js';
+import { grantRole } from '../util/discordManager.js';
+import { memberRoles } from '../index.js';
 import * as db from '../util/db.js';
 
 /** @type {import('./index.js').Command} */
@@ -23,16 +25,7 @@ export default {
         .setRequired(true),
     ),
   async execute(interaction) {
-    const verifiedRole = interaction.guild.roles.cache.find(
-      (role) => role.id === process.env.ROLE_ID,
-    );
-    if (!verifiedRole) {
-      return interaction.reply({
-        content:
-          'The verified role could not be found. Please check the role ID in the environment variables.',
-        ephemeral: true,
-      });
-    }
+    const verifiedRoleNames = [];
     const ip = interaction.options.getString('ip');
 
     const targetMember = await interaction.guild.members.fetch(
@@ -47,12 +40,24 @@ export default {
         ephemeral: true,
       });
     }
+    const formatter = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' });
+    for (const role of memberRoles) {
+      const verifiedRole = interaction.guild.roles.cache.find((r) => r.id === role);
+      if (!verifiedRole) {
+        return interaction.reply({
+          content:
+            'The verified role could not be found. Please check the role ID in the environment variables.',
+          ephemeral: true,
+        });
+      }
+      verifiedRoleNames.push(verifiedRole.name);
+    }
 
     await db.setData(targetMember.id, ip);
-    await targetMember.roles.add(verifiedRole);
+    await grantRole(guild, id, memberRoles);
 
     return interaction.reply({
-      content: `${targetMember.id} has been verified and granted the ${verifiedRole.name} role.`,
+      content: `${targetMember.id} has been verified and granted the ${formatter.format(verifiedRoleNames)} role${verifiedRoleNames.length > 1 ? "s": ""}.`,
       ephemeral: false,
     });
   },
