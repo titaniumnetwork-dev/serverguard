@@ -1,4 +1,4 @@
-import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import { Colors, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import { deleteData } from '../util/db.js';
 
 /** @type {import('./index.js').Command} */
@@ -13,8 +13,26 @@ export default {
         .setRequired(true),
     ),
     async execute(interaction) {
-        const user = interaction.options.getMember('user').id;
-        await deleteData(user).then(async () => {
+        console.log(interaction.options.get("user").value)
+        let user = interaction.options.getMember('user')
+        if (!user) {
+            user = interaction.client.users.fetch(interaction.options.get("user").value)
+            if (!user){
+                const embed = new EmbedBuilder()
+                .setTitle('Not found')
+                .setDescription(`<@${user}> does not exist.`)
+                .setColor(Colors.Red);
+                return await interaction.reply({ embeds: [embed], ephemeral: false});
+            }
+            await deleteData(user.id).then(async () => {
+                const embed = new EmbedBuilder()
+                .setTitle('Manual Data Deletion Request Processed.')
+                .setDescription(`<@${user.id}> has been deleted from the database successfully.`)
+                .setColor('#600080');    
+            return await interaction.reply({ embeds: [embed], ephemeral: false});
+            })
+        }
+        await deleteData(user.id).then(async () => {
             const member = await interaction.guild.members.fetch(user);
             if (member.roles.cache.some(role => role.id === process.env.ROLE_ID)) {
                 member.roles.remove(process.env.ROLE_ID);
@@ -22,9 +40,9 @@ export default {
             }
             const embed = new EmbedBuilder()
                 .setTitle('Manual Data Deletion Request Processed.')
-                .setDescription(`<@${user}> has been deleted from the database successfully.`)
+                .setDescription(`<@${user.id}> has been deleted from the database successfully.`)
                 .setColor('#600080');    
-            interaction.reply({ embeds: [embed], ephemeral: false});
+            await interaction.reply({ embeds: [embed], ephemeral: false});
         })
     },
 };
