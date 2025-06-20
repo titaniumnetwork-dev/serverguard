@@ -67,8 +67,6 @@ CREATE TABLE pending (
 \q
 ```
 
-4. Set up the Discord Bot:
-
 #### Create A Discord Bot:
 1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
 2. Click "New Application" and give it a name
@@ -78,10 +76,10 @@ CREATE TABLE pending (
    - Presence Intent
    - Server Members Intent
    - Message Content Intent
-6. Go to "OAuth2" → "General"
+6. Go to "OAuth2" -> "General"
    - Save the Client ID and Client Secret
    - Add your redirect URI (e.g., `https://mydomain.com/callback`)
-7. Go to "OAuth2" → "URL Generator"
+7. Go to "OAuth2" -> "URL Generator"
    - Select scopes: `bot`, `identify`
    - Select bot permissions:
      - Administrator
