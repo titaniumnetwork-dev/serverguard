@@ -21,7 +21,7 @@ export default {
 
     const button = new ButtonBuilder()
       .setLabel('Verify now!')
-      .setURL('https://titaniumnetwork.org/login')
+      .setURL(`${process.env.DOMAIN}/login`)
       .setStyle(ButtonStyle.Link);
 
     const row = new ActionRowBuilder().addComponents(button);
