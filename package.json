@@ -3,21 +3,30 @@
   "module": "index.js",
   "type": "module",
   "scripts": {
-    "start": "bun run src/index.js",
-    "format": "prettier --write src/"
+    "start": "node src/index.js",
+    "format": "prettier --config .prettierrc.js --write ./src/",
+    "lint": "eslint ./src/",
+    "lint:fix": "eslint ./src/ --fix"
   },
   "devDependencies": {
-    "bun-types": "latest",
-    "prettier": "^3.5.1"
-  },
-  "peerDependencies": {
-    "typescript": "^5.4.5"
+    "@types/express": "^5.0.3",
+    "@types/express-session": "^1.18.2",
+    "@types/node": "^24.0.3",
+    "@types/better-sqlite3": "^7.6.13",
+    "@typescript-eslint/eslint-plugin": "^8.34.1",
+		"@typescript-eslint/parser": "^8.34.1",
+		"dotenv": "^16.5.0",
+		"eslint": "^9.29.0",
+    "prettier": "^3.5.3",
+    "tslib": "^2.8.1",
+    "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@discordjs/core": "^2.0.1",
-    "discord.js": "^14.18.0",
-    "express": "^4.21.2",
+    "@discordjs/core": "^2.1.1",
+    "better-sqlite3": "^12.0.0",
+    "discord.js": "^14.20.0",
+    "express": "^5.1.0",
     "express-session": "^1.18.1",
-    "pg": "^8.13.3"
+    "pg": "^8.16.1"
   }
 }
