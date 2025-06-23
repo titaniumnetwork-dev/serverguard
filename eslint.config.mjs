@@ -34,7 +34,7 @@ export default [
 		},
 
 		rules: {
-			"no-await-in-loop": "warn",
+			"no-await-in-loop": "off",
 			"no-unused-labels": "warn",
 			quotes: ["error", "double"],
 			"getter-return": "error",

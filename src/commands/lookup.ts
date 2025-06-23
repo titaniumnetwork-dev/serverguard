@@ -1,6 +1,6 @@
-import type { Command } from ".";
+import type { Command } from "./index.ts";
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
-import { getIpData } from "../util/ip";
+import { getIpData } from "../util/ip.ts";
 
 export default {
 	data: new SlashCommandBuilder()

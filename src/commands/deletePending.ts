@@ -13,7 +13,7 @@ export default {
 		const initialEmbed = new EmbedBuilder()
 			.setTitle("Processing data deletion requests...")
 			.setDescription(
-				`All users that have requested deletion will have their data have been cleared from the database and their roles removed.`
+				"All users that have requested deletion will have their data have been cleared from the database and their roles removed."
 			)
 			.setColor("#600080");
 		await interaction.reply({ embeds: [initialEmbed], ephemeral: false });

@@ -26,8 +26,7 @@ export async function loadStructures<T>(
 	const files = await readdir(dir);
 
 	// Create an empty array to store the structures
-	/** @type {T[]} */
-	const structures = [];
+	const structures: T[] = [];
 
 	// Loop through all the files in the directory
 	for (const file of files) {

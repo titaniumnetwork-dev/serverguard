@@ -17,5 +17,5 @@ export const predicate: StructurePredicate<Command> = (structure) =>
 	typeof structure === "object" &&
 	"data" in structure &&
 	"execute" in structure &&
-	typeof structure.data === "object" &&
+	typeof structure.data === "function" &&
 	typeof structure.execute === "function";
