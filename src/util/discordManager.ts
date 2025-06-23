@@ -37,11 +37,13 @@ export async function logWebhook(
 ) {
 	if (!client.user) return;
 	const webhookClient = new WebhookClient({ url: process.env.WEBHOOK_URL });
-
+	const username = client.user.globalName ?? "Unknown";
+	const avatarURL =
+		client.user.avatarURL() ?? "https://i.imgur.com/AfFp7pu.png";
 	if (status === "passed") {
 		webhookClient.send({
-			username: client.user.globalName!,
-			avatarURL: "https://i.imgur.com/AfFp7pu.png",
+			username,
+			avatarURL,
 			content: `<@!${id}> has successfully verified.`,
 		});
 		return;
@@ -49,8 +51,8 @@ export async function logWebhook(
 
 	if (status === "alt") {
 		webhookClient.send({
-			username: client.user.globalName!,
-			avatarURL: "https://i.imgur.com/AfFp7pu.png",
+			username,
+			avatarURL,
 			content: `<@!${id}> was flagged as an alt account. Their main is <@!${mainId}>.`,
 		});
 		return;
@@ -58,8 +60,8 @@ export async function logWebhook(
 
 	if (status === "mobile") {
 		webhookClient.send({
-			username: client.user.globalName!,
-			avatarURL: "https://i.imgur.com/AfFp7pu.png",
+			username,
+			avatarURL,
 			content: `<@!${id}> Is trying to verify over a potential mobile data connection.`,
 		});
 		return;
@@ -67,8 +69,8 @@ export async function logWebhook(
 
 	if (status === "proxy") {
 		webhookClient.send({
-			username: client.user.globalName!,
-			avatarURL: "https://i.imgur.com/AfFp7pu.png",
+			username,
+			avatarURL,
 			content: `<@!${id}> attempted to verify over a proxy or VPN.`,
 		});
 		return;

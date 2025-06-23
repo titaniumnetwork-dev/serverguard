@@ -1,7 +1,10 @@
 import { readdir, stat } from "node:fs/promises";
 import { URL } from "node:url";
-import { predicate as commandPredicate } from "../commands/index.js";
-import { predicate as eventPredicate } from "../events/index.js";
+import {
+	predicate as commandPredicate,
+	type Command,
+} from "../commands/index.ts";
+import { predicate as eventPredicate, type Event } from "../events/index.ts";
 import type { PathLike } from "node:fs";
 
 export type StructurePredicate<T> = (structure: Partial<T>) => structure is T;
@@ -43,10 +46,8 @@ export async function loadStructures<T>(
 			);
 			continue;
 		}
-
 		// Import the structure dynamically from the file
 		const structure = (await import(`${dir}/${file}`)).default;
-
 		// If the structure is a valid structure, add it
 		if (predicate(structure)) structures.push(structure);
 	}

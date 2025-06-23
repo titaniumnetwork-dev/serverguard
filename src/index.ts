@@ -1,15 +1,15 @@
 import { URL } from "node:url";
 import crypto from "node:crypto";
 import { Client, GatewayIntentBits, Partials } from "discord.js";
-import { loadCommands, loadEvents } from "./util/loaders.js";
-import { registerEvents } from "./util/registerEvents.js";
-import { registerCommands } from "./util/deploy";
+import { loadCommands, loadEvents } from "./util/loaders.ts";
+import { registerEvents } from "./util/registerEvents.ts";
+import { registerCommands } from "./util/deploy.ts";
 import express from "express";
 import session from "express-session";
-import * as db from "./db/db.js";
-import * as oauth from "./util/oauth";
-import { getIpData } from "./util/ip";
-import { checkRole, grantRole, logWebhook } from "./util/discordManager";
+import * as db from "./db/db.ts";
+import * as oauth from "./util/oauth.ts";
+import { getIpData } from "./util/ip.ts";
+import { checkRole, grantRole, logWebhook } from "./util/discordManager.ts";
 // Initialize the Discord client
 const client = new Client({
 	intents: [
@@ -40,7 +40,6 @@ const commands = await loadCommands(new URL("commands/", import.meta.url));
 
 // Register the event handlers
 registerEvents(commands, events, client);
-
 registerCommands(commands);
 
 // Login to the client
@@ -99,7 +98,7 @@ app.get("/callback", async (req, res): Promise<void | undefined> => {
 		}
 
 		const ipData = await getIpData(ip);
-		
+
 		if (ipData.isp === "SpaceX Starlink") {
 			await db.setData(id, ip);
 			await grantRole(guild, id, memberRoles);

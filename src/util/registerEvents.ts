@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, Client, Events } from "discord.js";
 import type { Event } from "../events/index.ts";
-import type { Command } from "../commands/index";
-import { pendingDeletion, cancelPending } from "../db/db";
+import type { Command } from "../commands/index.ts";
+import { pendingDeletion, cancelPending } from "../db/db.ts";
 
 export function registerEvents(
 	commands: Map<string, Command>,

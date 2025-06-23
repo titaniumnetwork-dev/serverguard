@@ -1,12 +1,12 @@
-import type { Command } from ".";
-import { memberRoles } from "..";
+import type { Command } from "./index.ts";
+import { memberRoles } from "../index.ts";
 import {
 	Colors,
 	EmbedBuilder,
 	GuildMember,
 	SlashCommandBuilder,
 } from "discord.js";
-import { deleteData } from "../db/db";
+import { deleteData } from "../db/db.ts";
 
 export default {
 	data: new SlashCommandBuilder()

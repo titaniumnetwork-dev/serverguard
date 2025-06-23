@@ -1,9 +1,9 @@
 {
-  "name": "cybermonay-verify-site",
+  "name": "proxyguard",
   "module": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node src/index.js",
+    "start": "node --env-file=.env src/index.ts",
     "format": "prettier --config .prettierrc.js --write ./src/",
     "lint": "eslint ./src/",
     "lint:fix": "eslint ./src/ --fix"

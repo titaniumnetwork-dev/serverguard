@@ -1,13 +1,13 @@
-import type { Command } from ".";
-import { memberRoles } from "../index.js";
+import type { Command } from "./index.ts";
+import { memberRoles } from "../index.ts";
 import {
 	GuildMember,
 	SlashCommandBuilder,
 	Colors,
 	EmbedBuilder,
 } from "discord.js";
-import { grantRole } from "../util/discordManager.js";
-import * as db from "../util/db";
+import { grantRole } from "../util/discordManager.ts";
+import * as db from "../db/db.ts";
 
 export default {
 	data: new SlashCommandBuilder()

@@ -1,7 +1,7 @@
-import type { Command } from ".";
+import type { Command } from "./index.ts";
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
-import { deletePending } from "../db/db";
-import { memberRoles } from "..";
+import { deletePending } from "../db/db.ts";
+import { memberRoles } from "../index.ts";
 
 export default {
 	data: new SlashCommandBuilder()

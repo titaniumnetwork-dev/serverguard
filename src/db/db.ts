@@ -1,5 +1,5 @@
 import Database from "better-sqlite3";
-import crypto from "crypto";
+import crypto from "node:crypto";
 
 export const db = new Database(process.env.DB_FILE);
 
@@ -14,11 +14,10 @@ db.prepare(
 
 db.prepare(
 	`
-	CREATE TABLE pending (
+	CREATE TABLE IF NOT EXISTS pending (
 		id VARCHAR(100)
 	);
-`
-).run();
+`).run();
 
 function hashIp(ip: string) {
 	const hash = crypto.createHash("sha256");

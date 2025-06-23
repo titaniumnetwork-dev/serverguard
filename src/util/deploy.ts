@@ -1,4 +1,4 @@
-import type { Command } from "../commands/index.js";
+import type { Command } from "../commands/index.ts";
 import { API } from "@discordjs/core/http-only";
 import { REST } from "discord.js";
 
@@ -11,7 +11,7 @@ export async function registerCommands(commands: Map<string, Command>) {
 		command.data.toJSON()
 	);
 	await api.applicationCommands.bulkOverwriteGlobalCommands(
-		process.env.APPLICATION_ID,
+		process.env.CLIENT_ID,
 		commandData
 	);
 

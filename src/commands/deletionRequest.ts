@@ -1,4 +1,4 @@
-import type { Command } from ".";
+import type { Command } from "./index.ts";
 import {
 	EmbedBuilder,
 	ActionRowBuilder,
@@ -6,7 +6,7 @@ import {
 	ButtonStyle,
 	SlashCommandBuilder,
 } from "discord.js";
-import { pendingDeletion } from "../db/db";
+import { pendingDeletion } from "../db/db.ts";
 
 export default {
 	data: new SlashCommandBuilder()
