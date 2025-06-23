@@ -74,7 +74,7 @@ export async function deletePending() {
 		if (ids.length)
 			db.prepare("DELETE FROM userdata WHERE id = ANY (?)").run(ids);
 		db.prepare("TRUNCATE table pending").run();
-		
+
 		return ids;
 	} catch (err) {
 		console.log(err);
