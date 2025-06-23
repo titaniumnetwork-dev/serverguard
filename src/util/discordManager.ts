@@ -11,11 +11,11 @@ export async function grantRole(
 	id: GuildMemberResolvable,
 	roles: RoleResolvable[] | RoleResolvable
 ) {
-	if (await guild.members.fetch(id).catch(() => false)) {
-		const member = await guild.members.fetch(id);
-		member.roles.add(roles);
-		console.log("Added roles to " + id);
-	}
+	const member = await guild.members.fetch(id);
+	if (!member) return;
+
+	member.roles.add(roles);
+	console.log("Added roles to " + id);
 }
 
 export async function checkRole(
@@ -23,10 +23,10 @@ export async function checkRole(
 	id: GuildMemberResolvable,
 	roleID: string
 ) {
-	if (await guild.members.fetch(id).catch(() => false)) {
-		const member = await guild.members.fetch(id);
-		return member.roles.cache.some((role) => role.id === roleID);
-	}
+	const member = await guild.members.fetch(id);
+	if (!member) return false;
+
+	return member.roles.cache.some((role) => role.id === roleID);
 }
 
 export async function logWebhook(

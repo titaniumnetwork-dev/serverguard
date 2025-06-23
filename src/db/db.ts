@@ -34,9 +34,7 @@ export async function checkIp(ip: string) {
 		const res = await db
 			.prepare("SELECT id FROM userdata WHERE ip = ?")
 			.get(hashedIp);
-		if (!res) {
-			return false;
-		}
+		if (!res) return false;
 
 		return res.id;
 	} catch (err) {

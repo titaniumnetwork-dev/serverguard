@@ -91,7 +91,7 @@ app.get("/callback", async (req, res): Promise<void | undefined> => {
 
 		const mainId = await db.checkIp(ip);
 
-		if (id !== mainId) {
+		if (mainId && id !== mainId) {
 			await logWebhook(client, id, "alt", mainId);
 			grantRole(guild, id, altRole);
 			return res.redirect("/altflagged");

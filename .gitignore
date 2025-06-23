@@ -177,5 +177,5 @@ dist
 # Bun file
 bun.lockb
 
-#
-database
+# database
+database.db
