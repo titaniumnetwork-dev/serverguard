@@ -11,8 +11,8 @@ import * as db from "../db/db.ts";
 
 export default {
 	data: new SlashCommandBuilder()
-		.setName("verify")
-		.setDescription("Verify a user and IP address")
+		.setName("manverify")
+		.setDescription("Manually verify a user and IP address")
 		.addUserOption((option) =>
 			option
 				.setName("user")

@@ -9,9 +9,9 @@ import {
 
 export default {
 	data: new SlashCommandBuilder()
-		.setName("verifybutton")
+		.setName("panel")
 		.setDescription(
-			"Deploy the button which connects the user to the verification site"
+			"Send a verification panel/button in that channel"
 		),
 	async execute(interaction) {
 		const messageEmbed = new EmbedBuilder()
