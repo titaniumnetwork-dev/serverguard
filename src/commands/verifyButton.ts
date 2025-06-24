@@ -23,7 +23,7 @@ export default {
 
 		const button = new ButtonBuilder()
 			.setLabel("Verify now!")
-			.setURL("https://titaniumnetwork.org/login")
+			.setURL(`https://discord.com/api/oauth2/authorize?client_id=${process.env.CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(process.env.REDIRECT_URI)}&scope=identify`)
 			.setStyle(ButtonStyle.Link);
 
 		const row = new ActionRowBuilder().addComponents(button);
