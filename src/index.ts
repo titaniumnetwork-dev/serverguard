@@ -4,7 +4,7 @@ import { loadCommands, loadEvents } from "./util/loaders.ts";
 import { registerEvents } from "./util/registerEvents.ts";
 import { registerCommands } from "./util/deploy.ts";
 import { Hono } from "hono";
-import { serveStatic, getConnInfo } from "hono/bun"
+import { serveStatic, getConnInfo } from "hono/bun";
 import * as db from "./db/db.ts";
 import * as oauth from "./util/oauth.ts";
 import { getIpData } from "./util/ip.ts";
@@ -29,7 +29,7 @@ const altRole = process.env.ALT_ROLE_ID;
 const mutedRole = process.env.MUTED_ROLE_ID;
 
 // Initizalize the Express server
-const app = new Hono()
+const app = new Hono();
 const port = 3113;
 
 // Load the events and commands
@@ -42,27 +42,50 @@ registerCommands(commands);
 
 // Login to the client
 void client.login(process.env.DISCORD_TOKEN);
+// manual verification array
+export const verificationMap: Map<string, (value?: any) => void> = new Map();
 const guild = await client.guilds.fetch(process.env.GUILD_ID);
+export const verifiedRoleNames = [];
+for (const role of memberRoles) {
+	const verifiedRole = guild.roles.cache.find((r) => r.id === role);
+	if (!verifiedRole) {
+		throw new Error(
+			`The verified role ${role} could not be found. Please check the role ID in the environment variables.`
+		);
+	}
+	verifiedRoleNames.push(verifiedRole.name);
+}
 
 app.use(serveStatic({ root: import.meta.dirname + "/public" }));
 
 app.get("/callback", async (c) => {
-	const code = c.req.query("code")
+	const code = c.req.query("code");
 	if (!code) {
-		c.redirect("/error.html")
-		return;
+		return c.redirect("/error.html");
+	}
+	console.log(getConnInfo(c).remote.addressType)
+	const ip = getConnInfo(c).remote.address;
+	if (!ip) {
+		return c.redirect("/error.html");
 	}
 	const token = await oauth.getToken(code);
 	const user = await oauth.getUserData(token);
 	const id = user.id;
 	await oauth.invalidateToken(token);
-
-	const netInfo = getConnInfo(c)
-	const ip = netInfo.remote.address;
 	
-	if (!ip) {
-		return c.redirect("/error.html")
+	const state = c.req.query("state");
+	if (state) {
+		const manual = verificationMap.get(state);
+		if (!manual) return c.redirect("/error.html");
+		manual({
+			ip,
+			id
+		});
+		// make a different page eventually
+		return c.redirect("/passed.html");
 	}
+
+
 	if (await checkRole(guild, id, mutedRole)) {
 		console.log("muted role");
 		return c.redirect("/flagged.html");
@@ -100,15 +123,15 @@ app.get("/callback", async (c) => {
 		await logWebhook(client, id, "proxy");
 		return c.redirect("/flagged.html");
 	}
-	
+
 	if (!mainId) await db.setData(id, ip);
 	await grantRole(guild, id, memberRoles);
 	await logWebhook(client, id, "passed");
 	return c.redirect("/passed.html");
 });
 
-export default {  
-  port, 
-  fetch: app.fetch,
-  development: process.env.NODE_ENV === "development"
-}
+export default {
+	port,
+	fetch: app.fetch,
+	development: process.env.NODE_ENV === "development",
+};

@@ -7,6 +7,7 @@ import {
 	EmbedBuilder,
 } from "discord.js";
 import { grantRole } from "../util/discordManager.ts";
+import { verifiedRoleNames } from "../index.ts";
 import * as db from "../db/db.ts";
 
 export default {
@@ -26,8 +27,8 @@ export default {
 				.setRequired(true)
 		),
 	async execute(interaction) {
+		if (!interaction.channel) return;
 		if (!interaction.guild) return;
-		const verifiedRoleNames = [];
 		const ip = interaction.options.getString("ip");
 		if (!ip) return;
 		const user = interaction.options.getUser("user");
@@ -54,19 +55,6 @@ export default {
 			style: "long",
 			type: "conjunction",
 		});
-		for (const role of memberRoles) {
-			const verifiedRole = interaction.guild.roles.cache.find(
-				(r) => r.id === role
-			);
-			if (!verifiedRole) {
-				return interaction.reply({
-					content:
-						"The verified role could not be found. Please check the role ID in the environment variables.",
-					ephemeral: true,
-				});
-			}
-			verifiedRoleNames.push(verifiedRole.name);
-		}
 
 		await db.setData(member.id, ip);
 		await grantRole(interaction.guild, member.id, memberRoles);

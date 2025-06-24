@@ -10,9 +10,7 @@ import {
 export default {
 	data: new SlashCommandBuilder()
 		.setName("panel")
-		.setDescription(
-			"Send a verification panel/button in that channel"
-		),
+		.setDescription("Send a verification panel/button in that channel"),
 	async execute(interaction) {
 		const messageEmbed = new EmbedBuilder()
 			.setTitle("Verify with this server")
@@ -23,7 +21,9 @@ export default {
 
 		const button = new ButtonBuilder()
 			.setLabel("Verify now!")
-			.setURL(`https://discord.com/api/oauth2/authorize?client_id=${process.env.CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(process.env.REDIRECT_URI)}&scope=identify`)
+			.setURL(
+				`https://discord.com/api/oauth2/authorize?client_id=${process.env.CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(process.env.REDIRECT_URI)}&scope=identify`
+			)
 			.setStyle(ButtonStyle.Link);
 
 		const row = new ActionRowBuilder().addComponents(button);

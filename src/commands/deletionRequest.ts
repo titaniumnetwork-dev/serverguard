@@ -51,13 +51,14 @@ export default {
 			} else if (i.customId === "deny") {
 				await interaction.editReply({
 					content: "Deletion request cancelled.",
+					embeds: [],
 					components: [],
 				});
 			}
 		});
 		collector.on("end", () => {
 			if (!confirmationMessage.deleted) {
-				confirmationMessage.edit({ components: [] });
+				confirmationMessage.edit({ embeds: [], components: [] });
 			}
 		});
 	},

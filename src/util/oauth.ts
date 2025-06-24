@@ -5,7 +5,7 @@ export async function getUserData(token: string) {
 				Authorization: `Bearer ${token}`,
 			},
 		});
-		
+
 		const userData = await query.json();
 		return userData;
 	} catch (error) {

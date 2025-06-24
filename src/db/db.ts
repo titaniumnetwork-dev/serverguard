@@ -70,7 +70,10 @@ export async function deletePending() {
 	try {
 		const result = db.prepare("SELECT id FROM pending").all();
 		const ids = result.map((row) => row.id);
-		if (ids.length) db.prepare("DELETE FROM userdata WHERE id IN (SELECT value FROM json_each(?))").run(JSON.stringify(ids));
+		if (ids.length)
+			db.prepare(
+				"DELETE FROM userdata WHERE id IN (SELECT value FROM json_each(?))"
+			).run(JSON.stringify(ids));
 		db.prepare("DELETE FROM pending").run();
 
 		return ids;
