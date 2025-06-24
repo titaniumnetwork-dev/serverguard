@@ -1,8 +1,7 @@
-import Database from "better-sqlite3";
+import { Database } from "bun:sqlite";
 import crypto from "node:crypto";
 
-export const db = new Database(process.env.DB_FILE);
-
+export const db = new Database(process.env.DB_FILE, { create: true });
 db.prepare(
 	`
 	CREATE TABLE IF NOT EXISTS userdata (
@@ -69,11 +68,10 @@ export async function pendingDeletion(id: string) {
 
 export async function deletePending() {
 	try {
-		const result = db.prepare("SELECT id FROM pending").get();
-		const ids = result.map((row) => row[0]);
-		if (ids.length)
-			db.prepare("DELETE FROM userdata WHERE id = ANY (?)").run(ids);
-		db.prepare("TRUNCATE table pending").run();
+		const result = db.prepare("SELECT id FROM pending").all();
+		const ids = result.map((row) => row.id);
+		if (ids.length) db.prepare("DELETE FROM userdata WHERE id IN (SELECT value FROM json_each(?))").run(JSON.stringify(ids));
+		db.prepare("DELETE FROM pending").run();
 
 		return ids;
 	} catch (err) {

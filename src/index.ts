@@ -18,7 +18,6 @@ const client = new Client({
 		GatewayIntentBits.MessageContent,
 		GatewayIntentBits.GuildMembers,
 	],
-	partials: [Partials.GuildMember],
 });
 
 // Add your member roles to this array
@@ -116,8 +115,8 @@ app.get("/callback", async (req, res): Promise<void | undefined> => {
 			await logWebhook(client, id, "proxy");
 			return res.redirect("/flagged");
 		}
-
-		await db.setData(id, ip);
+		
+		if (!mainId) await db.setData(id, ip);
 		await grantRole(guild, id, memberRoles);
 		await logWebhook(client, id, "passed");
 		res.redirect("/passed");
