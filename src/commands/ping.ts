@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "discord.js";
-import type { Command } from ".";
+import type { Command } from "./index.ts";
 
 export default {
 	data: new SlashCommandBuilder().setName("ping").setDescription("Ping!"),

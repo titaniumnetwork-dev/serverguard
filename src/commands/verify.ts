@@ -29,6 +29,7 @@ export default {
 		if (!interaction.guild) return;
 		const verifiedRoleNames = [];
 		const ip = interaction.options.getString("ip");
+		if (!ip) return;
 		const user = interaction.options.getUser("user");
 		if (!user) {
 			const embed = new EmbedBuilder()
@@ -69,9 +70,14 @@ export default {
 
 		await db.setData(member.id, ip);
 		await grantRole(interaction.guild, member.id, memberRoles);
-
+		const embed = new EmbedBuilder()
+			.setTitle("Manually verified.")
+			.setDescription(
+				`<@!${member.id}> has been verified and granted the ${formatter.format(verifiedRoleNames)} role${verifiedRoleNames.length > 1 ? "s" : ""}.`
+			)
+			.setColor("#600080");
 		return interaction.reply({
-			content: `<@!${member.id}> has been verified and granted the ${formatter.format(verifiedRoleNames)} role${verifiedRoleNames.length > 1 ? "s" : ""}.`,
+			embeds: [embed],
 			ephemeral: false,
 		});
 	},

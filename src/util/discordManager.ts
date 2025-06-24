@@ -37,7 +37,7 @@ export async function logWebhook(
 ) {
 	if (!client.user) return;
 	const webhookClient = new WebhookClient({ url: process.env.WEBHOOK_URL });
-	const username = client.user.globalName ?? "Unknown";
+	const username = client.user.username ?? "Unknown";
 	const avatarURL =
 		client.user.avatarURL() ?? "https://i.imgur.com/AfFp7pu.png";
 	if (status === "passed") {
@@ -73,6 +73,5 @@ export async function logWebhook(
 			avatarURL,
 			content: `<@!${id}> attempted to verify over a proxy or VPN.`,
 		});
-		return;
 	}
 }

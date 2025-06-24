@@ -1,7 +1,5 @@
 import type { StructurePredicate } from "../util/loaders.ts";
 import type {
-	RESTPostAPIApplicationCommandsJSONBody,
-	CommandInteraction,
 	SlashCommandBuilder,
 	SlashCommandOptionsOnlyBuilder,
 	ChatInputCommandInteraction,

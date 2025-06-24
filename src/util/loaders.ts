@@ -36,17 +36,17 @@ export async function loadStructures<T>(
 		}
 
 		// Get the stats of the file
-		const statFile = await stat(new URL(`${dir}/${file}`));
+		const statFile = await stat(new URL(`${dir}${file}`));
 
 		// If the file is a directory and recursive is true, recursively load the structures in the directory
 		if (statFile.isDirectory() && recursive) {
 			structures.push(
-				...(await loadStructures(`${dir}/${file}`, predicate, recursive))
+				...(await loadStructures(`${dir}${file}`, predicate, recursive))
 			);
 			continue;
 		}
 		// Import the structure dynamically from the file
-		const structure = (await import(`${dir}/${file}`)).default;
+		const structure = (await import(`${dir}${file}`)).default;
 		// If the structure is a valid structure, add it
 		if (predicate(structure)) structures.push(structure);
 	}

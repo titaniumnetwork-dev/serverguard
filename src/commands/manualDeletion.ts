@@ -6,7 +6,7 @@ import {
 	GuildMember,
 	SlashCommandBuilder,
 } from "discord.js";
-import { deleteData } from "../db/db.ts";
+import { cancelPending, deleteData } from "../db/db.ts";
 
 export default {
 	data: new SlashCommandBuilder()
@@ -28,6 +28,7 @@ export default {
 			return await interaction.reply({ embeds: [embed], ephemeral: false });
 		}
 		const member = interaction.options.getMember("user") as GuildMember;
+		await cancelPending(user.id);
 		await deleteData(user.id);
 		if (member) {
 			member.roles.remove(memberRoles);
