@@ -6,6 +6,7 @@ import {
 	ButtonStyle,
 	SlashCommandBuilder,
 	InteractionContextType,
+	MessageFlags,
 } from "discord.js";
 import { pendingDeletion } from "../db/db.ts";
 
@@ -35,11 +36,10 @@ export default {
 		const confirmationMessage = await interaction.reply({
 			embeds: [confirmationEmbed],
 			components: [row],
-			ephemeral: true,
+			flags: [MessageFlags.Ephemeral]
 		});
-		const filter = (i) => i.customId === "confirm" || i.customId === "deny";
 		const collector = interaction.channel.createMessageComponentCollector({
-			filter,
+			filter: (i) => i.customId === "confirm" || i.customId === "deny",
 		});
 		collector.on("collect", async (i) => {
 			if (i.customId === "confirm") {

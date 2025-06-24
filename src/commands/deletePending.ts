@@ -21,7 +21,7 @@ export default {
 				"All users that have requested deletion will have their data have been cleared from the database and their roles removed."
 			)
 			.setColor("#600080");
-		await interaction.reply({ embeds: [initialEmbed], ephemeral: false });
+		await interaction.reply({ embeds: [initialEmbed] });
 		const result = (await deletePending()) ?? [];
 		for (const id of result) {
 			const member = await interaction.guild.members.fetch(id);

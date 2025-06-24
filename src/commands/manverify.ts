@@ -6,6 +6,7 @@ import {
 	Colors,
 	EmbedBuilder,
 	InteractionContextType,
+	MessageFlags,
 } from "discord.js";
 import { grantRole } from "../util/discordManager.ts";
 import { verifiedRoleNames } from "../index.ts";
@@ -40,7 +41,7 @@ export default {
 				.setTitle("Not found")
 				.setDescription(`<@!${user}> does not exist.`)
 				.setColor(Colors.Red);
-			return interaction.reply({ embeds: [embed], ephemeral: false });
+			return interaction.reply({ embeds: [embed] });
 		}
 		const member = interaction.options.getMember("user") as GuildMember;
 		if (!member) return;
@@ -50,7 +51,7 @@ export default {
 		if (mainId) {
 			return interaction.reply({
 				content: `<@!${member.id}>'s IP is already verified as <@!${mainId}>.`,
-				ephemeral: true,
+				flags: [MessageFlags.Ephemeral]
 			});
 		}
 
@@ -67,9 +68,6 @@ export default {
 				`<@!${member.id}> has been verified and granted the ${formatter.format(verifiedRoleNames)} role${verifiedRoleNames.length > 1 ? "s" : ""}.`
 			)
 			.setColor("#600080");
-		return interaction.reply({
-			embeds: [embed],
-			ephemeral: false,
-		});
+		return interaction.reply({ embeds: [embed] });
 	},
 } as Command;

@@ -28,7 +28,7 @@ export default {
 				.setTitle("Not found")
 				.setDescription(`<@${user}> does not exist.`)
 				.setColor(Colors.Red);
-			return await interaction.reply({ embeds: [embed], ephemeral: false });
+			return await interaction.reply({ embeds: [embed] });
 		}
 		const member = interaction.options.getMember("user") as GuildMember;
 		await cancelPending(user.id);
@@ -43,6 +43,6 @@ export default {
 				`<@${user.id}> has been deleted from the database successfully.`
 			)
 			.setColor("#600080");
-		await interaction.reply({ embeds: [embed], ephemeral: false });
+		await interaction.reply({ embeds: [embed] });
 	},
 } as Command;

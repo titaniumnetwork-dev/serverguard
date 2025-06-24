@@ -37,7 +37,7 @@ export default {
 				.setTitle("Not found")
 				.setDescription(`<@!${user}> does not exist.`)
 				.setColor(Colors.Red);
-			return interaction.reply({ embeds: [embed], ephemeral: false });
+			return interaction.reply({ embeds: [embed] });
 		}
 
 		const verifyEmbed = new EmbedBuilder()
