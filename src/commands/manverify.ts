@@ -28,7 +28,7 @@ export default {
 				.setRequired(true)
 		)
 		.setContexts(InteractionContextType.Guild),
-		
+
 	async execute(interaction) {
 		if (!interaction.channel) return;
 		if (!interaction.guild) return;

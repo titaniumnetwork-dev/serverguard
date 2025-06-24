@@ -13,6 +13,7 @@ export default {
 		.setName("panel")
 		.setDescription("Send a verification panel/button in that channel")
 		.setContexts(InteractionContextType.Guild),
+
 	async execute(interaction) {
 		if (!interaction.guild) return;
 		const messageEmbed = new EmbedBuilder()

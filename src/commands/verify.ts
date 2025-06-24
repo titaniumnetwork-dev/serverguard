@@ -2,7 +2,6 @@ import type { Command } from "./index.ts";
 import { memberRoles, verificationMap, verifiedRoleNames } from "../index.ts";
 import crypto from "node:crypto";
 import {
-	GuildMember,
 	SlashCommandBuilder,
 	Colors,
 	EmbedBuilder,
@@ -19,15 +18,16 @@ export default {
 	data: new SlashCommandBuilder()
 		.setName("verify")
 		.setDescription(
-			"Manually verify a user and IP address (interactive version)"
+			"Manually verify a user and IP address. (interactive version)"
 		)
 		.addUserOption((option) =>
 			option
 				.setName("user")
-				.setDescription("The user to verify")
+				.setDescription("The user to verify.")
 				.setRequired(true)
 		)
 		.setContexts(InteractionContextType.Guild),
+
 	async execute(interaction) {
 		if (!interaction.channel) return;
 		if (!interaction.guild) return;
@@ -63,7 +63,7 @@ export default {
 			reject("Timeout occured.");
 			interaction.editReply({
 				content: "A timeout occurred, please run the command again!",
-				embeds: []
+				embeds: [],
 			});
 		}, 120000);
 
@@ -73,13 +73,13 @@ export default {
 		});
 
 		const data = (await promise) as any;
-		clearTimeout(timeout)
+		clearTimeout(timeout);
 		if (user.id !== data.id) {
 			return interaction.editReply({
 				content: `<@!${user.id}> authenticated as <@!${data.id}>. (user mismatch)`,
 				embeds: [],
-				components: []
-			})
+				components: [],
+			});
 		}
 		const mainId = await db.checkIp(data.ip);
 
@@ -87,10 +87,10 @@ export default {
 			return interaction.editReply({
 				content: `<@!${user.id}>'s IP is already verified as <@!${mainId}>.`,
 				embeds: [],
-				components: []
+				components: [],
 			});
-		};
-		
+		}
+
 		const ipData = await getIpData(data.ip);
 		const confirmationEmbed = new EmbedBuilder()
 			.setTitle("Would you like to verify this user?")

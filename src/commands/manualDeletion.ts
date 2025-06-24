@@ -16,11 +16,11 @@ export default {
 		.addUserOption((option) =>
 			option
 				.setName("user")
-				.setDescription("The user to erase from the DB")
+				.setDescription("The user to erase from the database.")
 				.setRequired(true)
 		)
 		.setContexts(InteractionContextType.Guild),
-		
+
 	async execute(interaction) {
 		const user = interaction.options.getUser("user");
 		if (!user) {

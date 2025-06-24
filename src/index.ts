@@ -63,7 +63,7 @@ app.get("/callback", async (c) => {
 	if (!code) {
 		return c.redirect("/error.html");
 	}
-	console.log(getConnInfo(c).remote.addressType)
+	console.log(getConnInfo(c).remote.addressType);
 	const ip = getConnInfo(c).remote.address;
 	if (!ip) {
 		return c.redirect("/error.html");
@@ -72,19 +72,18 @@ app.get("/callback", async (c) => {
 	const user = await oauth.getUserData(token);
 	const id = user.id;
 	await oauth.invalidateToken(token);
-	
+
 	const state = c.req.query("state");
 	if (state) {
 		const manual = verificationMap.get(state);
 		if (!manual) return c.redirect("/error.html");
 		manual({
 			ip,
-			id
+			id,
 		});
 		// make a different page eventually
 		return c.redirect("/passed.html");
 	}
-
 
 	if (await checkRole(guild, id, mutedRole)) {
 		console.log("muted role");

@@ -1,5 +1,9 @@
 import type { Command } from "./index.ts";
-import { SlashCommandBuilder, EmbedBuilder, InteractionContextType } from "discord.js";
+import {
+	SlashCommandBuilder,
+	EmbedBuilder,
+	InteractionContextType,
+} from "discord.js";
 import { deletePending } from "../db/db.ts";
 import { memberRoles } from "../index.ts";
 
@@ -8,7 +12,7 @@ export default {
 		.setName("deletepending")
 		.setDescription("Deletes all entries that are pending deletion.")
 		.setContexts(InteractionContextType.Guild),
-		
+
 	async execute(interaction) {
 		if (!interaction.guild) return;
 		const initialEmbed = new EmbedBuilder()
