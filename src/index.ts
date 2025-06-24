@@ -4,7 +4,7 @@ import { loadCommands, loadEvents } from "./util/loaders.ts";
 import { registerEvents } from "./util/registerEvents.ts";
 import { registerCommands } from "./util/deploy.ts";
 import { Hono } from "hono";
-import { serveStatic } from "hono/bun"
+import { serveStatic, getConnInfo } from "hono/bun"
 import * as db from "./db/db.ts";
 import * as oauth from "./util/oauth.ts";
 import { getIpData } from "./util/ip.ts";
@@ -52,12 +52,14 @@ app.get("/callback", async (c) => {
 		c.redirect("/error.html")
 		return;
 	}
-
 	const token = await oauth.getToken(code);
 	const user = await oauth.getUserData(token);
 	const id = user.id;
 	await oauth.invalidateToken(token);
-	const ip = c.req.header("cf-connecting-ip");
+
+	const netInfo = getConnInfo(c)
+	const ip = netInfo.remote.address;
+	
 	if (!ip) {
 		return c.redirect("/error.html")
 	}
