@@ -5,6 +5,7 @@ export async function getUserData(token: string) {
 				Authorization: `Bearer ${token}`,
 			},
 		});
+		
 		const userData = await query.json();
 		return userData;
 	} catch (error) {
@@ -30,6 +31,9 @@ export async function invalidateToken(access_token: string) {
 export async function getToken(authCode: string) {
 	const oauthResponse = await fetch("https://discord.com/api/oauth2/token", {
 		method: "POST",
+		headers: {
+			"Content-Type": "application/x-www-form-urlencoded",
+		},
 		body: new URLSearchParams({
 			client_id: process.env.CLIENT_ID,
 			client_secret: process.env.CLIENT_SECRET,
@@ -38,9 +42,6 @@ export async function getToken(authCode: string) {
 			redirect_uri: process.env.REDIRECT_URI,
 			scope: "identity",
 		}).toString(),
-		headers: {
-			"Content-Type": "application/x-www-form-urlencoded",
-		},
 	});
 
 	const tokenData = await oauthResponse.json();
