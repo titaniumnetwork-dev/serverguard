@@ -4,6 +4,7 @@ import {
 	Colors,
 	EmbedBuilder,
 	GuildMember,
+	InteractionContextType,
 	SlashCommandBuilder,
 } from "discord.js";
 import { cancelPending, deleteData } from "../db/db.ts";
@@ -17,7 +18,9 @@ export default {
 				.setName("user")
 				.setDescription("The user to erase from the DB")
 				.setRequired(true)
-		),
+		)
+		.setContexts(InteractionContextType.Guild),
+		
 	async execute(interaction) {
 		const user = interaction.options.getUser("user");
 		if (!user) {

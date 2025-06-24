@@ -9,6 +9,7 @@ import {
 	ButtonBuilder,
 	ActionRowBuilder,
 	ButtonStyle,
+	InteractionContextType,
 } from "discord.js";
 import * as db from "../db/db.ts";
 import { getIpData } from "../util/ip.ts";
@@ -25,7 +26,8 @@ export default {
 				.setName("user")
 				.setDescription("The user to verify")
 				.setRequired(true)
-		),
+		)
+		.setContexts(InteractionContextType.Guild),
 	async execute(interaction) {
 		if (!interaction.channel) return;
 		if (!interaction.guild) return;
@@ -37,8 +39,6 @@ export default {
 				.setColor(Colors.Red);
 			return interaction.reply({ embeds: [embed], ephemeral: false });
 		}
-		const member = interaction.options.getMember("user") as GuildMember;
-		if (!member) return;
 
 		const verifyEmbed = new EmbedBuilder()
 			.setTitle("Manual Verification")
@@ -85,11 +85,12 @@ export default {
 
 		if (mainId) {
 			return interaction.editReply({
-				content: `<@!${member.id}>'s IP is already verified as <@!${mainId}>.`,
+				content: `<@!${user.id}>'s IP is already verified as <@!${mainId}>.`,
 				embeds: [],
 				components: []
 			});
-		}
+		};
+		
 		const ipData = await getIpData(data.ip);
 		const confirmationEmbed = new EmbedBuilder()
 			.setTitle("Would you like to verify this user?")
@@ -126,8 +127,8 @@ export default {
 		collector.on("collect", async (i) => {
 			if (i.user.id !== interaction.user.id) return;
 			if (i.customId === "confirm") {
-				await db.setData(member.id, data.ip);
-				await grantRole(interaction.guild, member.id, memberRoles);
+				await db.setData(user.id, data.ip);
+				await grantRole(interaction.guild, user.id, memberRoles);
 				const formatter = new Intl.ListFormat("en", {
 					style: "long",
 					type: "conjunction",
@@ -135,7 +136,7 @@ export default {
 				const embed = new EmbedBuilder()
 					.setTitle("Manually verified.")
 					.setDescription(
-						`<@!${member.id}> has been verified and granted the ${formatter.format(verifiedRoleNames)} role${verifiedRoleNames.length > 1 ? "s" : ""}.`
+						`<@!${user.id}> has been verified and granted the ${formatter.format(verifiedRoleNames)} role${verifiedRoleNames.length > 1 ? "s" : ""}.`
 					)
 					.setColor("#600080");
 				await interaction.editReply({ embeds: [embed], components: [] });

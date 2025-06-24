@@ -5,13 +5,16 @@ import {
 	ButtonBuilder,
 	ButtonStyle,
 	SlashCommandBuilder,
+	InteractionContextType,
 } from "discord.js";
 import { pendingDeletion } from "../db/db.ts";
 
 export default {
 	data: new SlashCommandBuilder()
 		.setName("deletionrequest")
-		.setDescription("Requests the deletion of the user's data"),
+		.setDescription("Requests the deletion of the user's data")
+		.setContexts(InteractionContextType.Guild),
+		
 	async execute(interaction) {
 		if (!interaction.channel) return;
 		const confirmationEmbed = new EmbedBuilder()

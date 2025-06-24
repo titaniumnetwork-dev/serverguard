@@ -5,13 +5,16 @@ import {
 	ButtonBuilder,
 	ButtonStyle,
 	SlashCommandBuilder,
+	InteractionContextType,
 } from "discord.js";
 
 export default {
 	data: new SlashCommandBuilder()
 		.setName("panel")
-		.setDescription("Send a verification panel/button in that channel"),
+		.setDescription("Send a verification panel/button in that channel")
+		.setContexts(InteractionContextType.Guild),
 	async execute(interaction) {
+		if (!interaction.guild) return;
 		const messageEmbed = new EmbedBuilder()
 			.setTitle("Verify with this server")
 			.setDescription(

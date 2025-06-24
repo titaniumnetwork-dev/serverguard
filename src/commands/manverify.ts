@@ -5,6 +5,7 @@ import {
 	SlashCommandBuilder,
 	Colors,
 	EmbedBuilder,
+	InteractionContextType,
 } from "discord.js";
 import { grantRole } from "../util/discordManager.ts";
 import { verifiedRoleNames } from "../index.ts";
@@ -25,7 +26,9 @@ export default {
 				.setName("ip")
 				.setDescription("The IP address to verify")
 				.setRequired(true)
-		),
+		)
+		.setContexts(InteractionContextType.Guild),
+		
 	async execute(interaction) {
 		if (!interaction.channel) return;
 		if (!interaction.guild) return;
