@@ -123,6 +123,14 @@ app.get("/callback", async (c) => {
 		return c.redirect("/flagged.html");
 	}
 
+	if (
+		ipData.isp === 'Crunchbits LLC' || 
+		ipData.org === 'Crunchbits LLC'
+	) {
+		await logWebhook(client, id, "proxy");
+		return c.redirect("/flagged.html");
+	}
+
 	if (!mainId) await db.setData(id, ip);
 	await grantRole(guild, id, memberRoles);
 	await logWebhook(client, id, "passed");
