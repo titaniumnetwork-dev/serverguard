@@ -4,7 +4,7 @@ import { loadCommands, loadEvents } from "./util/loaders.ts";
 import { registerEvents } from "./util/registerEvents.ts";
 import { registerCommands } from "./util/deploy.ts";
 import { Hono } from "hono";
-import { serveStatic, getConnInfo } from "hono/bun";
+import { serveStatic } from "hono/bun";
 import * as db from "./db/db.ts";
 import * as oauth from "./util/oauth.ts";
 import { getIpData } from "./util/ip.ts";
@@ -45,7 +45,7 @@ void client.login(process.env.DISCORD_TOKEN);
 // manual verification array
 export const verificationMap: Map<string, (value?: any) => void> = new Map();
 const guild = await client.guilds.fetch(process.env.GUILD_ID);
-export const verifiedRoleNames = [];
+export const verifiedRoleNames: string[] = [];
 for (const role of memberRoles) {
 	const verifiedRole = guild.roles.cache.find((r) => r.id === role);
 	if (!verifiedRole) {
@@ -63,8 +63,7 @@ app.get("/callback", async (c) => {
 	if (!code) {
 		return c.redirect("/error.html");
 	}
-	console.log(getConnInfo(c).remote.addressType);
-	const ip = getConnInfo(c).remote.address;
+	const ip = c.req.header("X-Forwarded-For");
 	if (!ip) {
 		return c.redirect("/error.html");
 	}
