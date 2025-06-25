@@ -64,6 +64,7 @@ export default {
 			interaction.editReply({
 				content: "A timeout occurred, please run the command again!",
 				embeds: [],
+				components: [],
 			});
 		}, 120000);
 
@@ -71,8 +72,12 @@ export default {
 			embeds: [verifyEmbed],
 			components: [verifyRow],
 		});
-
-		const data = (await promise) as any;
+		let data;
+		try {
+			data = (await promise) as any;
+		} catch {
+			return;
+		}
 		clearTimeout(timeout);
 		if (user.id !== data.id) {
 			return interaction.editReply({

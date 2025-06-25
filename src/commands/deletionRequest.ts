@@ -36,7 +36,7 @@ export default {
 		const confirmationMessage = await interaction.reply({
 			embeds: [confirmationEmbed],
 			components: [row],
-			flags: [MessageFlags.Ephemeral]
+			flags: [MessageFlags.Ephemeral],
 		});
 		const collector = interaction.channel.createMessageComponentCollector({
 			filter: (i) => i.customId === "confirm" || i.customId === "deny",

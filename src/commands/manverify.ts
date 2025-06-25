@@ -51,7 +51,7 @@ export default {
 		if (mainId) {
 			return interaction.reply({
 				content: `<@!${member.id}>'s IP is already verified as <@!${mainId}>.`,
-				flags: [MessageFlags.Ephemeral]
+				flags: [MessageFlags.Ephemeral],
 			});
 		}
 
