@@ -104,14 +104,6 @@ app.get("/callback", async (c) => {
 
 	const ipData = await getIpData(ip);
 
-	if (ipData.isp === "SpaceX Starlink") {
-		if (!mainId) await db.setData(id, ip);
-		await grantRole(guild, id, memberRoles);
-		await logWebhook(client, id, "passed");
-		return c.redirect("/passed.html");
-		// This is just for now until an actual solution can be thought up of to fix the 5G Home Users
-	}
-
 	if (ipData.mobile) {
 		await logWebhook(client, id, "mobile");
 		return c.redirect("/mobile.html");
