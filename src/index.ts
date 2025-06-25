@@ -114,6 +114,15 @@ app.get("/callback", async (c) => {
 		return c.redirect("/flagged.html");
 	}
 
+	// :sob:
+	if (
+		ipData.isp === 'netcup GmbH' || 
+		ipData.org === 'netcup GmbH'
+	) {
+		await logWebhook(client, id, "proxy");
+		return c.redirect("/flagged.html");
+	}
+
 	if (!mainId) await db.setData(id, ip);
 	await grantRole(guild, id, memberRoles);
 	await logWebhook(client, id, "passed");
