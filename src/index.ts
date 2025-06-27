@@ -85,13 +85,13 @@ app.get("/callback", async (c) => {
 	}
 
 	if (await checkRole(guild, id, mutedRole)) {
-		console.log("muted role");
-		return c.redirect("/flagged.html");
+		console.log(`${id} tried verifying with muted role`);
+		return c.redirect("/altflagged.html");
 	}
 
 	if (await checkRole(guild, id, altRole)) {
-		console.log("alt role");
-		return c.redirect("/flagged.html");
+		console.log(`${id} tried verifying with alternate role`);
+		return c.redirect("/altflagged.html");
 	}
 
 	const mainId = await db.checkIp(ip);
