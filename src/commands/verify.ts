@@ -12,7 +12,7 @@ import {
 } from "discord.js";
 import * as db from "../db/db.ts";
 import { getIpData } from "../util/ip.ts";
-import { grantRole } from "../util/discordManager.ts";
+import { grantRole, logWebhook } from "../util/discordManager.ts";
 
 export default {
 	data: new SlashCommandBuilder()
@@ -85,7 +85,8 @@ export default {
 				embeds: [],
 				components: [],
 			});
-		}
+		};
+
 		const mainId = await db.checkIp(data.ip);
 
 		if (mainId) {
@@ -133,7 +134,10 @@ export default {
 			if (i.user.id !== interaction.user.id) return;
 			if (i.customId === "confirm") {
 				await db.setData(user.id, data.ip);
-				await grantRole(interaction.guild, user.id, memberRoles);
+				await grantRole(interaction.guild!, user.id, memberRoles);
+				await logWebhook(interaction.client, `<@!${user.id}> was manually verified by <@!${interaction.user.id}>.`);
+
+				//@ts-expect-error
 				const formatter = new Intl.ListFormat("en", {
 					style: "long",
 					type: "conjunction",

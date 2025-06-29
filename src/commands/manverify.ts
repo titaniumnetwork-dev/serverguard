@@ -8,7 +8,7 @@ import {
 	InteractionContextType,
 	MessageFlags,
 } from "discord.js";
-import { grantRole } from "../util/discordManager.ts";
+import { grantRole, logWebhook } from "../util/discordManager.ts";
 import { verifiedRoleNames } from "../index.ts";
 import * as db from "../db/db.ts";
 
@@ -54,7 +54,7 @@ export default {
 				flags: [MessageFlags.Ephemeral],
 			});
 		}
-
+		//@ts-expect-error
 		const formatter = new Intl.ListFormat("en", {
 			style: "long",
 			type: "conjunction",
@@ -62,6 +62,7 @@ export default {
 
 		await db.setData(member.id, ip);
 		await grantRole(interaction.guild, member.id, memberRoles);
+		await logWebhook(interaction.client, `<@!${user.id}> was manually verified by <@!${interaction.user.id}>.`);
 		const embed = new EmbedBuilder()
 			.setTitle("Manually verified.")
 			.setDescription(

@@ -31,47 +31,15 @@ export async function checkRole(
 
 export async function logWebhook(
 	client: Client,
-	id: GuildMemberResolvable,
-	status: "passed" | "alt" | "mobile" | "proxy",
-	mainId?: string
+	content: string,
 ) {
 	if (!client.user) return;
 	const webhookClient = new WebhookClient({ url: process.env.WEBHOOK_URL });
 	const username = client.user.username ?? "Unknown";
-	const avatarURL =
-		client.user.avatarURL() ?? "https://i.imgur.com/AfFp7pu.png";
-	if (status === "passed") {
-		webhookClient.send({
-			username,
-			avatarURL,
-			content: `<@!${id}> has successfully verified.`,
-		});
-		return;
-	}
-
-	if (status === "alt") {
-		webhookClient.send({
-			username,
-			avatarURL,
-			content: `<@!${id}> was flagged as an alt account. Their main is <@!${mainId}>.`,
-		});
-		return;
-	}
-
-	if (status === "mobile") {
-		webhookClient.send({
-			username,
-			avatarURL,
-			content: `<@!${id}> Is trying to verify over a potential mobile data connection.`,
-		});
-		return;
-	}
-
-	if (status === "proxy") {
-		webhookClient.send({
-			username,
-			avatarURL,
-			content: `<@!${id}> attempted to verify over a proxy or VPN.`,
-		});
-	}
+	const avatarURL = client.user.avatarURL() || "https://i.imgur.com/AfFp7pu.png";
+	webhookClient.send({
+		username,
+		avatarURL,
+		content,
+	});
 }

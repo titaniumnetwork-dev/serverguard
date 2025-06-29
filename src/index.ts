@@ -86,18 +86,20 @@ app.get("/callback", async (c) => {
 
 	if (await checkRole(guild, id, mutedRole)) {
 		console.log(`${id} tried verifying with muted role`);
+		await logWebhook(client, `<@!${id}> tried to verify while having the muted role.`);
 		return c.redirect("/altflagged.html");
 	}
 
 	if (await checkRole(guild, id, altRole)) {
 		console.log(`${id} tried verifying with alternate role`);
+		await logWebhook(client, `<@!${id}> tried to verify while having the alternate role.`);
 		return c.redirect("/altflagged.html");
 	}
 
 	const mainId = await db.checkIp(ip);
 
 	if (mainId && id !== mainId) {
-		await logWebhook(client, id, "alt", mainId);
+		await logWebhook(client, `<@!${id}> was flagged as an alt account. Their main is <@!${mainId}>.`);
 		grantRole(guild, id, altRole);
 		return c.redirect("/altflagged.html");
 	}
@@ -105,18 +107,18 @@ app.get("/callback", async (c) => {
 	const ipData = await getIpData(ip);
 
 	if (ipData.mobile) {
-		await logWebhook(client, id, "mobile");
+		await logWebhook(client, `<@!${id}> Is trying to verify over a potential mobile data connection.`);
 		return c.redirect("/mobile.html");
 	}
 
 	if (ipData.proxy || ipData.hosting) {
-		await logWebhook(client, id, "proxy");
+		await logWebhook(client, `<@!${id}> attempted to verify over a proxy or VPN.`);
 		return c.redirect("/flagged.html");
 	}
 
 	if (!mainId) await db.setData(id, ip);
 	await grantRole(guild, id, memberRoles);
-	await logWebhook(client, id, "passed");
+	await logWebhook(client, `<@!${id}> has successfully verified.`);
 	return c.redirect("/passed.html");
 });
 
