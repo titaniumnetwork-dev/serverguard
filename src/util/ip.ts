@@ -1,3 +1,74 @@
+// dont copy the patented and copyrighted EzCloudflare Solution for hono.
+// (joke)
+import ipaddr from 'ipaddr.js';
+import type { Context } from 'hono';
+
+const cfCidrs: [ipaddr.IPv4 | ipaddr.IPv6, number][] = [];
+const cfCidrsSet = new Set<string>();
+
+async function loadCfCidrs() {
+  if (cfCidrs.length) return;
+
+  const [v4, v6] = await Promise.all([
+    fetch('https://www.cloudflare.com/ips-v4')
+      .then(r => r.text())
+      .then(t => t.trim().split('\n')),
+    fetch('https://www.cloudflare.com/ips-v6')
+      .then(r => r.text())
+      .then(t => t.trim().split('\n')),
+  ]);
+
+  [...v4, ...v6].forEach(cidr => {
+    try {
+      const parsed = ipaddr.parseCIDR(cidr);
+      const str = `${parsed[0].toNormalizedString()}/${parsed[1]}`;
+      if (!cfCidrsSet.has(str)) {
+        cfCidrsSet.add(str);
+        cfCidrs.push(parsed);
+      }
+    } catch {
+      // ignore invalid CIDRs
+    }
+  });
+}
+
+async function isCloudflare(ip: string): Promise<boolean> {
+  await loadCfCidrs();
+  try {
+    const addr = ipaddr.parse(ip);
+    return cfCidrs.some(([range, bits]) => addr.match(range, bits));
+  } catch {
+    return false;
+  }
+}
+
+function isLoopback(ip: string): boolean {
+  try {
+    return ipaddr.parse(ip).range() === 'loopback';
+  } catch {
+    return false;
+  }
+}
+
+export async function getIp(c: Context): Promise<string | undefined> {
+  let ip = (c.req.raw as any).socket?.remoteAddress;
+
+  if (ip && isLoopback(ip)) {
+    const xff = c.req.header('x-forwarded-for');
+    if (xff) {
+      const parts = xff.split(',').map(ip => ip.trim());
+      if (parts.length > 0) ip = parts[parts.length - 1];
+    }
+  }
+
+  if (ip && await isCloudflare(ip)) {
+    ip = c.req.header('cf-connecting-ip') ?? ip;
+  }
+
+  return ip;
+}
+
+
 export async function getIpData(ip: string) {
 	const query = await fetch(`http://ip-api.com/json/${ip}?fields=66842623`);
 	const data = await query.json();

@@ -7,7 +7,7 @@ import { Hono } from "hono";
 import { serveStatic } from "hono/bun";
 import * as db from "./db/db.ts";
 import * as oauth from "./util/oauth.ts";
-import { getIpData } from "./util/ip.ts";
+import { getIpData , getIp} from "./util/ip.ts";
 import { checkRole, grantRole, logWebhook } from "./util/discordManager.ts";
 // Initialize the Discord client
 const client = new Client({
@@ -63,7 +63,7 @@ app.get("/callback", async (c) => {
 	if (!code) {
 		return c.redirect("/error.html");
 	}
-	const ip = c.req.header("X-Forwarded-For");
+	const ip = getIp(c);
 	if (!ip) {
 		return c.redirect("/error.html");
 	}
