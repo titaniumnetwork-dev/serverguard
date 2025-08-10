@@ -63,7 +63,7 @@ app.get("/callback", async (c) => {
 	if (!code) {
 		return c.redirect("/error.html");
 	}
-	const ip = getIp(c);
+	const ip = await getIp(c);
 	if (!ip) {
 		return c.redirect("/error.html");
 	}
