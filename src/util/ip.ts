@@ -3,12 +3,24 @@
 import ipaddr from 'ipaddr.js';
 import type { Context } from 'hono';
 
-const cfCidrs: [ipaddr.IPv4 | ipaddr.IPv6, number][] = [];
-const cfCidrsSet = new Set<string>();
+function setSome<T>(
+  set: Set<T>,
+  predicate: (value: T, index: number, set: Set<T>) => boolean,
+  thisArg?: any
+): boolean {
+  let index = 0;
+  for (const value of set) {
+    if (predicate.call(thisArg, value, index, set)) {
+      return true;
+    }
+    index++;
+  }
+  return false;
+}
+
+const cfCiders = new Set<[ipaddr.IPv4 | ipaddr.IPv6, number]>();
 
 async function loadCfCidrs() {
-  if (cfCidrs.length) return;
-
   const [v4, v6] = await Promise.all([
     fetch('https://www.cloudflare.com/ips-v4')
       .then(r => r.text())
@@ -20,23 +32,16 @@ async function loadCfCidrs() {
 
   [...v4, ...v6].forEach(cidr => {
     try {
-      const parsed = ipaddr.parseCIDR(cidr);
-      const str = `${parsed[0].toNormalizedString()}/${parsed[1]}`;
-      if (!cfCidrsSet.has(str)) {
-        cfCidrsSet.add(str);
-        cfCidrs.push(parsed);
-      }
-    } catch {
-      // ignore invalid CIDRs
-    }
+      cfCiders.add(ipaddr.parseCIDR(cidr))
+    } catch {}
   });
 }
 
 async function isCloudflare(ip: string): Promise<boolean> {
-  await loadCfCidrs();
+  if (!cfCiders.size)await loadCfCidrs();
   try {
     const addr = ipaddr.parse(ip);
-    return cfCidrs.some(([range, bits]) => addr.match(range, bits));
+    return setSome(cfCiders, (([range, bits]) => addr.match(range, bits)));
   } catch {
     return false;
   }
