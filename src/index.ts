@@ -7,8 +7,10 @@ import { Hono } from "hono";
 import { serveStatic } from "hono/bun";
 import * as db from "./db/db.ts";
 import * as oauth from "./util/oauth.ts";
-import { getIpData , getIp} from "./util/ip.ts";
+import { getIpData, getIp } from "./util/ip.ts";
 import { checkRole, grantRole, logWebhook } from "./util/discordManager.ts";
+import type { Server, BunRequest } from "bun";
+
 // Initialize the Discord client
 const client = new Client({
 	intents: [
@@ -64,6 +66,7 @@ app.get("/callback", async (c) => {
 		return c.redirect("/error.html");
 	}
 	const ip = await getIp(c);
+	console.log(ip);
 	if (!ip) {
 		return c.redirect("/error.html");
 	}
@@ -86,20 +89,29 @@ app.get("/callback", async (c) => {
 
 	if (await checkRole(guild, id, mutedRole)) {
 		console.log(`${id} tried verifying with muted role`);
-		await logWebhook(client, `<@!${id}> tried to verify while having the muted role.`);
+		await logWebhook(
+			client,
+			`<@!${id}> tried to verify while having the muted role.`
+		);
 		return c.redirect("/altflagged.html");
 	}
 
 	if (await checkRole(guild, id, altRole)) {
 		console.log(`${id} tried verifying with alternate role`);
-		await logWebhook(client, `<@!${id}> tried to verify while having the alternate role.`);
+		await logWebhook(
+			client,
+			`<@!${id}> tried to verify while having the alternate role.`
+		);
 		return c.redirect("/altflagged.html");
 	}
 
 	const mainId = await db.checkIp(ip);
 
 	if (mainId && id !== mainId) {
-		await logWebhook(client, `<@!${id}> was flagged as an alt account. Their main is <@!${mainId}>.`);
+		await logWebhook(
+			client,
+			`<@!${id}> was flagged as an alt account. Their main is <@!${mainId}>.`
+		);
 		grantRole(guild, id, altRole);
 		return c.redirect("/altflagged.html");
 	}
@@ -107,12 +119,18 @@ app.get("/callback", async (c) => {
 	const ipData = await getIpData(ip);
 
 	if (ipData.mobile) {
-		await logWebhook(client, `<@!${id}> Is trying to verify over a potential mobile data connection.`);
+		await logWebhook(
+			client,
+			`<@!${id}> Is trying to verify over a potential mobile data connection.`
+		);
 		return c.redirect("/mobile.html");
 	}
 
 	if (ipData.proxy || ipData.hosting) {
-		await logWebhook(client, `<@!${id}> attempted to verify over a proxy or VPN.`);
+		await logWebhook(
+			client,
+			`<@!${id}> attempted to verify over a proxy or VPN.`
+		);
 		return c.redirect("/flagged.html");
 	}
 
@@ -124,6 +142,12 @@ app.get("/callback", async (c) => {
 
 export default {
 	port,
-	fetch: app.fetch,
+	fetch: (req: BunRequest, server: Server) => {
+		// percs is as crazy as crytals for using hono first, and second also using bun.
+		const ip = server?.requestIP(req)?.address ?? undefined;
+		console.log(server?.requestIP(req)?.address);
+
+		return app.fetch(req, { ip });
+	},
 	development: process.env.NODE_ENV === "development",
 };

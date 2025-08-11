@@ -22,8 +22,7 @@
   "dependencies": {
     "@discordjs/core": "^2.1.1",
     "discord.js": "^14.20.0",
-    "hono": "^4.8.2",
-    "ipaddr.js": "^2.2.0"
+    "hono": "^4.8.2"
   },
   "nodemonConfig": {
     "execMap": {

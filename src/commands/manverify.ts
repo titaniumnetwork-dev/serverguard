@@ -62,7 +62,10 @@ export default {
 
 		await db.setData(member.id, ip);
 		await grantRole(interaction.guild, member.id, memberRoles);
-		await logWebhook(interaction.client, `<@!${user.id}> was manually verified by <@!${interaction.user.id}>.`);
+		await logWebhook(
+			interaction.client,
+			`<@!${user.id}> was manually verified by <@!${interaction.user.id}>.`
+		);
 		const embed = new EmbedBuilder()
 			.setTitle("Manually verified.")
 			.setDescription(

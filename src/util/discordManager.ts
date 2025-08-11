@@ -29,14 +29,12 @@ export async function checkRole(
 	return member.roles.cache.some((role) => role.id === roleID);
 }
 
-export async function logWebhook(
-	client: Client,
-	content: string,
-) {
+export async function logWebhook(client: Client, content: string) {
 	if (!client.user) return;
 	const webhookClient = new WebhookClient({ url: process.env.WEBHOOK_URL });
 	const username = client.user.username ?? "Unknown";
-	const avatarURL = client.user.avatarURL() || "https://i.imgur.com/AfFp7pu.png";
+	const avatarURL =
+		client.user.avatarURL() || "https://i.imgur.com/AfFp7pu.png";
 	webhookClient.send({
 		username,
 		avatarURL,
