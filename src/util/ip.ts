@@ -1,6 +1,7 @@
 // dont copy the patented and copyrighted EzCloudflare TM Solution for hono.
 // (joke)
 import ipaddr from "./ipaddr_polyfill";
+import type { IPv4, IPv6 } from "./ipaddr_polyfill";
 import type { Context } from "hono";
 
 function setSome<T>(
@@ -18,7 +19,7 @@ function setSome<T>(
 	return false;
 }
 
-const cfCiders = new Set<[ipaddr.IPv4 | ipaddr.IPv6, number]>();
+const cfCiders = new Set<[IPv4 | IPv6, number]>();
 
 async function loadCfCidrs() {
 	const [v4, v6] = await Promise.all([

@@ -381,7 +381,7 @@ export class IPv6 extends IP {
 	};
 }
 
-export const Address = {
+export default {
 	IPv4,
 	IPv6,
 	fromByteArray(bytes: number[]): IPv4 | IPv6 {
@@ -411,7 +411,7 @@ export const Address = {
 		throw new Error("ipaddr polyfill: invalid CIDR address");
 	},
 	process(addr: string): IPv4 | IPv6 {
-		return Address.parse(addr);
+		return this.parse(addr);
 	},
 	subnetMatch<T extends IP>(
 		addr: T,
@@ -421,5 +421,3 @@ export const Address = {
 		return subnetMatch(addr, rangeList, defaultName);
 	},
 };
-
-export default Address;
