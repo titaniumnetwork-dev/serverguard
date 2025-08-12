@@ -1,5 +1,6 @@
 // dont copy the patented and copyrighted EzCloudflare TM Solution for hono.
 // (joke)
+import { getConnInfo } from "hono/bun";
 import ipaddr from "./ipaddr_polyfill";
 import type { IPv4, IPv6 } from "./ipaddr_polyfill";
 import type { Context } from "hono";
@@ -57,8 +58,7 @@ function isLoopback(ip: string): boolean {
 }
 
 export async function getIp(ctx: Context): Promise<string | undefined> {
-	let ip = ctx.get("ip") ?? ctx.env.ip;
-	console.log(ip);
+	let ip = getConnInfo(ctx)?.remote?.address;
 
 	if (ip && isLoopback(ip)) {
 		const xff = ctx.req.header("x-forwarded-for");

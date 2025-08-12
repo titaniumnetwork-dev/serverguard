@@ -9,7 +9,6 @@ import * as db from "./db/db.ts";
 import * as oauth from "./util/oauth.ts";
 import { getIpData, getIp } from "./util/ip.ts";
 import { checkRole, grantRole, logWebhook } from "./util/discordManager.ts";
-import type { Server, BunRequest } from "bun";
 
 // Initialize the Discord client
 const client = new Client({
@@ -66,7 +65,7 @@ app.get("/callback", async (c) => {
 		return c.redirect("/error.html");
 	}
 	const ip = await getIp(c);
-	console.log(ip);
+
 	if (!ip) {
 		return c.redirect("/error.html");
 	}
@@ -142,12 +141,6 @@ app.get("/callback", async (c) => {
 
 export default {
 	port,
-	fetch: (req: BunRequest, server: Server) => {
-		// percs is as crazy as crytals for using hono first, and second also using bun.
-		const ip = server?.requestIP(req)?.address ?? undefined;
-		console.log(server?.requestIP(req)?.address);
-
-		return app.fetch(req, { ip });
-	},
+	fetch: app.fetch,
 	development: process.env.NODE_ENV === "development",
 };
