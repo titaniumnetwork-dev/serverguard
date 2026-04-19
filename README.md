@@ -9,6 +9,7 @@ Created in response to mistrust of DC's development team as well as a desire to 
 - [Reinin](https://reinin.dev): Former Lead project developer
 - [proudparrot2](https://github.com/proudparrot2): Frontend developer
 - [Riftriot](https://github.com/rifting) and [Rafflesia](https://github.com/ProgrammerIn-wonderland): Helped a lot and gave good feedback
+- [e9x](https://github.com/e9x): 🇮🇱
 - All the testers!
 
 [Source repo for frontend](https://github.com/proudparrot2/proxyguard)
